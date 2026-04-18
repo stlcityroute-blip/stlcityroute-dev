@@ -2761,7 +2761,7 @@ function togglePinnedStart(id) {
     const s = stops.find(x => x.id === id);
     showToast('📌 Pinned: ' + (s ? s.address : '') + ' — optimize will start here');
   }
-  renderRoute();
+  renderRoute(); // route-only: pinning changes order display, not stop content
 }
 
 // ============================================================
@@ -2920,7 +2920,7 @@ async function optimizeRoute() {
 
     routeOrder = ordered.map(s => s.id);
     saveStops();
-    renderRoute();
+    renderRoute(); // route-only: optimize changes order, stop content unchanged
     markRouteChanged();
 
     const endNote = endLocation ? ` → ${endLocation.label}` : '';
@@ -3025,7 +3025,7 @@ function resetRouteOrder() {
   pinnedStartId = null;
   localStorage.removeItem('inspector-pinned-start');
   saveStops();
-  renderRoute();
+  renderRoute(); // route-only: reset changes sequence, not stop content
   markRouteChanged();
   showToast('Route order reset');
 }
@@ -3047,7 +3047,7 @@ function routeReorder(fromIdx, toIdx) {
   ids.splice(toIdx, 0, moved);
   routeOrder = ids;
   saveStops();
-  renderRoute();
+  renderRoute(); // route-only: drag reorder changes sequence, not stop content
   showToast('Stop ' + (fromIdx+1) + ' → position ' + (toIdx+1));
 }
 
@@ -3591,57 +3591,9 @@ function launchGoogleMaps() {
 // Pipeline: preprocess canvas → Tesseract OCR → address extractor
 // ============================================================
 
-// Lazy-load Tesseract from CDN — only on first scan
-async function loadTesseract() {
-  if (window.Tesseract) return window.Tesseract;
-  return new Promise((resolve, reject) => {
-    const s = document.createElement('script');
-    s.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
-    s.onload  = () => resolve(window.Tesseract);
-    s.onerror = () => reject(new Error('Could not load Tesseract — check connection'));
-    document.head.appendChild(s);
-  });
-}
 
-// Canvas preprocessing — grayscale + contrast boost for phone photos
-function preprocessImageForOCR(file) {
-  return new Promise((resolve, reject) => {
-    const url = URL.createObjectURL(file);
-    const img  = new Image();
-    img.onload = () => {
-      URL.revokeObjectURL(url);
-      // Scale down if very large (OCR doesn't need >2000px)
-      const MAX = 2000;
-      let w = img.width, h = img.height;
-      if (w > MAX || h > MAX) {
-        if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
-        else       { w = Math.round(w * MAX / h); h = MAX; }
-      }
-      const canvas = document.createElement('canvas');
-      canvas.width = w; canvas.height = h;
-      const ctx = canvas.getContext('2d');
 
-      // Draw base image
-      ctx.drawImage(img, 0, 0, w, h);
 
-      // Apply grayscale + contrast boost via pixel manipulation
-      const imageData = ctx.getImageData(0, 0, w, h);
-      const d = imageData.data;
-      for (let i = 0; i < d.length; i += 4) {
-        // Luminance grayscale
-        const gray = 0.299 * d[i] + 0.587 * d[i+1] + 0.114 * d[i+2];
-        // Contrast stretch: push midtones toward black/white
-        const c = Math.min(255, Math.max(0, (gray - 128) * 1.6 + 128));
-        d[i] = d[i+1] = d[i+2] = c;
-      }
-      ctx.putImageData(imageData, 0, 0);
-
-      resolve(canvas);
-    };
-    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Could not load image')); };
-    img.src = url;
-  });
-}
 
 // Known St. Louis street suffixes
 const STREET_SUFFIXES = new Set([
@@ -3722,6 +3674,57 @@ function extractAddressesFromText(rawText) {
   });
 }
 
+// ── Scan pipeline A: Anthropic vision API ────────────────────────────────
+async function _scanWithAnthropic(file, apiKey) {
+  const base64 = await new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result.split(',')[1]);
+    r.onerror = () => rej(new Error('Could not read file'));
+    r.readAsDataURL(file);
+  });
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true',
+    },
+    body: JSON.stringify({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 1024,
+      messages: [{ role: 'user', content: [
+        { type: 'image', source: { type: 'base64', media_type: file.type || 'image/jpeg', data: base64 } },
+        { type: 'text', text: 'This image contains a list of street addresses in St. Louis, Missouri. Extract every address you can see. Return ONLY a JSON array of strings, one address per element, no city/state/zip — just the street number and name. Example: ["2801 Dalton Ave","1415 North 13th Street"]. If no addresses found, return [].' }
+      ]}]
+    }),
+    signal: AbortSignal.timeout(30000)
+  });
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(err.error?.message || 'API error ' + response.status);
+  }
+  const data = await response.json();
+  const rawText = data.content?.find(b => b.type === 'text')?.text || '[]';
+  try {
+    const parsed = JSON.parse(rawText.replace(/```json|```/g, '').trim());
+    if (Array.isArray(parsed)) return parsed.filter(a => typeof a === 'string' && a.trim());
+  } catch(e) { /* fall through */ }
+  return extractAddressesFromText(rawText);
+}
+
+// ── Scan pipeline B: on-device TextDetector (Android Chrome) ─────────────
+async function _scanWithTextDetector(file) {
+  const detector = new window.TextDetector();
+  const bitmap = await createImageBitmap(file);
+  const results = await detector.detect(bitmap);
+  bitmap.close();
+  return extractAddressesFromText(results.map(r => r.rawValue).join('\n'));
+}
+
+
+
+// ── Orchestrator: choose pipeline, manage UI state ────────────────────────
 async function handleScanImage(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -3731,7 +3734,6 @@ async function handleScanImage(event) {
   const btn          = document.getElementById('btn-scan');
   const resultsPanel = document.getElementById('scan-results-panel');
 
-  // Show preview immediately
   const previewReader = new FileReader();
   previewReader.onload = e => { preview.src = e.target.result; preview.style.display = 'block'; };
   previewReader.readAsDataURL(file);
@@ -3747,93 +3749,22 @@ async function handleScanImage(event) {
     let addresses = [];
 
     if (apiKey && apiKey.startsWith('sk-')) {
-      // ── Path A: Anthropic API (best accuracy) ──────────────
       statusEl.textContent = '⏳ Reading image with AI…';
-
-      // Read file as base64
-      const base64 = await new Promise((res, rej) => {
-        const r = new FileReader();
-        r.onload = () => res(r.result.split(',')[1]);
-        r.onerror = () => rej(new Error('Could not read file'));
-        r.readAsDataURL(file);
-      });
-      const mediaType = file.type || 'image/jpeg';
-
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type':         'application/json',
-          'x-api-key':            apiKey,
-          'anthropic-version':    '2023-06-01',
-          'anthropic-dangerous-direct-browser-access': 'true',
-        },
-        body: JSON.stringify({
-          model:      'claude-haiku-4-5-20251001', // haiku: fast + cheap for address extraction
-          max_tokens: 1024,
-          messages: [{
-            role: 'user',
-            content: [
-              { type: 'image', source: { type: 'base64', media_type: mediaType, data: base64 } },
-              { type: 'text',  text: 'This image contains a list of street addresses in St. Louis, Missouri. Extract every address you can see. Return ONLY a JSON array of strings, one address per element, no city/state/zip — just the street number and name. Example: ["2801 Dalton Ave","1415 North 13th Street"]. If no addresses found, return [].' }
-            ]
-          }]
-        }),
-        signal: AbortSignal.timeout(30000)
-      });
-
-      if (!response.ok) {
-        const err = await response.json().catch(() => ({}));
-        throw new Error(err.error?.message || 'API error ' + response.status);
-      }
-
-      const data = await response.json();
-      const rawText = data.content?.find(b => b.type === 'text')?.text || '[]';
-      try {
-        const parsed = JSON.parse(rawText.replace(/```json|```/g, '').trim());
-        if (Array.isArray(parsed)) addresses = parsed.filter(a => typeof a === 'string' && a.trim());
-      } catch(e) {
-        // Claude returned plain text instead of JSON — fall back to line parser
-        addresses = extractAddressesFromText(rawText);
-      }
-
+      addresses = await _scanWithAnthropic(file, apiKey);
     } else if ('TextDetector' in window) {
-      // ── Path B: On-device TextDetector (Android Chrome) ────
       statusEl.textContent = '⏳ Reading with device AI…';
-      const detector = new window.TextDetector();
-      // Convert file to ImageBitmap for TextDetector
-      const bitmap = await createImageBitmap(file);
-      const results = await detector.detect(bitmap);
-      bitmap.close();
-      const rawText = results.map(r => r.rawValue).join('\n');
+      addresses = await _scanWithTextDetector(file);
       statusEl.textContent = '⏳ Extracting addresses…';
-      addresses = extractAddressesFromText(rawText);
-
     } else {
-      // ── Path C: Tesseract local OCR (last resort) ──────────
-      statusEl.textContent = '⏳ Loading OCR engine…';
-      const Tesseract = await loadTesseract();
-      statusEl.textContent = '⏳ Preprocessing image…';
-      const canvas = await preprocessImageForOCR(file);
-      statusEl.textContent = '⏳ Reading text…';
-      const { data: { text } } = await Tesseract.recognize(canvas, 'eng', {
-        logger: m => {
-          if (m.status === 'recognizing text') {
-            statusEl.textContent = '⏳ Reading… ' + Math.round((m.progress||0)*100) + '%';
-          }
-        },
-        tessedit_pageseg_mode: '6',
-      });
-      statusEl.textContent = '⏳ Extracting addresses…';
-      addresses = extractAddressesFromText(text);
+      // No scan capability available — prompt user to use paste or add API key
+      throw new Error('Add an Anthropic API key in ⚙️ Settings to enable photo scan');
     }
 
     if (!addresses.length) {
       const { hasTextDetector } = detectScanCapability();
       statusEl.textContent = apiKey
-        ? '⚠️ No addresses found in image — try 📋 paste or 🎤 voice'
-        : hasTextDetector
-          ? '⚠️ No addresses detected — try 📋 paste or add API key in ⚙️ Settings'
-          : '⚠️ No addresses found — use Google Lens / iOS Live Text → 📋 paste';
+        ? '⚠️ No addresses found — try a clearer photo, 📋 paste, or 🎤 voice'
+        : '⚠️ No addresses found — try 📋 paste, 🎤 voice, or add API key in ⚙️ Settings';
       statusEl.style.color = 'var(--warn)';
     } else {
       scannedAddresses = addresses.map(a => ({ address: a.trim(), checked: true }));
@@ -3842,7 +3773,6 @@ async function handleScanImage(event) {
       statusEl.style.display = 'none';
       showToast(`Found ${addresses.length} address${addresses.length !== 1 ? 'es' : ''} ✓`);
     }
-
   } catch(err) {
     statusEl.textContent = '❌ ' + (err.message || 'Scan failed');
     statusEl.style.color = 'var(--danger)';
@@ -4425,7 +4355,7 @@ function getCityJobs() {
     ord_header:'St. Louis Fire Code — IFC Adoption & Local Amendments',
     ord_body:'City of St. Louis, Missouri — Fire Prevention Enforcement Reference\n\nAUTHORITY\n\nThe City of St. Louis Fire Department Bureau of Fire Prevention enforces the International Fire Code (IFC) as locally adopted and amended, and City Code Chapter 23 (Fire Prevention).\n\nSCOPE\n\nThese regulations apply to all occupancies within the City of St. Louis, including:\n• Commercial and industrial buildings\n• Multi-family residential buildings (3 or more units)\n• Public assembly occupancies\n• Storage facilities\n\nEGRESS REQUIREMENTS\n\nAll means of egress — including exit doors, corridors, stairways, and discharge paths — must be:\n• Clear of all obstructions at all times\n• Fully illuminated with functional exit signs\n• Equipped with hardware operable from the egress side without special knowledge or effort\n• Of sufficient width and quantity for the posted occupancy load\n\nBlocking an exit or egress path is an imminent hazard requiring immediate correction. A closure order may be issued if the obstruction is not immediately removed.\n\nFIRE SUPPRESSION AND DETECTION SYSTEMS\n\n• Automatic fire sprinkler systems: annual inspection and test by a licensed fire protection contractor\n• Fire alarm systems: annual inspection, test, and certification\n• Portable fire extinguishers: monthly visual inspection by the occupant; annual service by a licensed contractor\n• Kitchen hood suppression systems: semi-annual cleaning and inspection\n\nWhen a fire suppression or detection system is out of service for more than four (4) hours, the fire department must be notified and a fire watch must be implemented.\n\nHAZARDOUS MATERIALS\n\nStorage of flammable, combustible, or hazardous materials must comply with IFC quantity limits for the occupancy classification. Requirements include:\n• Proper containers with secure lids and appropriate labeling\n• Adequate ventilation for areas where flammable vapors may accumulate\n• Safety Data Sheets (SDS) accessible on site for all hazardous materials\n• Separation from ignition sources per IFC Table requirements\n\nOCCUPANCY LOAD\n\nThe maximum posted occupancy of any occupied space may not be exceeded. For public assembly occupancies:\n• A pre-event inspection may be required for events with 300 or more attendees\n• Overcrowding is an imminent hazard requiring immediate reduction of occupancy\n\nFIREWORKS\n\nStorage, sale, and use of fireworks within the City of St. Louis is prohibited except:\n• Professional pyrotechnic displays with a valid City permit\n• Novelty sparklers and small consumer items as permitted under state law\n\nPENALTIES\n\n• Non-critical violation: $100–$500 per day after the compliance period\n• Imminent hazard non-compliance: $500–$2,000 per day\n• Operating after a closure order: $1,000–$2,000 per day plus possible criminal charges\n• Criminal prosecution for willful or knowing violations: Class A misdemeanor or higher depending on circumstances\n\nAPPEALS\n\nAppeals of any order or notice shall be filed with the Fire Code Board of Appeals within thirty (30) days. Imminent hazard closure orders are not stayed by the filing of an appeal.\n\nNote: This is a working reference. For official code text, consult the City of St. Louis Fire Department Bureau of Fire Prevention or the Municipal Code.'
   }
-];;
+];
   return _cityJobsCache;
 }
 
@@ -4760,9 +4690,23 @@ function showFullscreen(type) {
   const overlay = document.getElementById('fullscreen-overlay');
   const content = document.getElementById('fullscreen-content');
 
-  // ── MY ID ──────────────────────────────────────────────────
-  if (type === 'id') {
-    let idFs = document.getElementById('id-fullscreen');
+  // ID view uses its own fullscreen element, not the overlay
+  if (type === 'id') { _fsShowId(); return; }
+
+  // All other views open the shared overlay
+  overlay.style.display = 'block';
+  document.body.style.overflow = 'hidden';
+
+  if (type === 'questions') { _fsShowQuestions(content); return; }
+  if (type === 'authority') { _fsShowAuthority(content); return; }
+  if (type === 'docs')      { _fsShowDocs(content); }
+}
+
+// ── showFullscreen view renderers ─────────────────────────────────────────
+// showFullscreen() is now a short dispatcher. Each _fs* function handles one view.
+
+function _fsShowId() {
+let idFs = document.getElementById('id-fullscreen');
     if (!idFs) { idFs = document.createElement('div'); idFs.id = 'id-fullscreen'; document.body.appendChild(idFs); }
     const front = localStorage.getItem('creds-id-front') || '';
     const vw = window.innerWidth, vh = window.innerHeight;
@@ -4780,15 +4724,10 @@ function showFullscreen(type) {
       + '</div>';
     document.body.style.overflow = 'hidden';
     if (screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(()=>{});
-    return;
-  }
+}
 
-  overlay.style.display = 'block';
-  document.body.style.overflow = 'hidden';
-
-  // ── QUESTIONS & FOLLOW-UP ──────────────────────────────────
-  if (type === 'questions') {
-    // Build CSB block (always first)
+function _fsShowQuestions(content) {
+// Build CSB block (always first)
     const csbDept = STL_DEPARTMENTS.find(d => d.id === 'csb');
     let html = '<div style="padding:10px 0 30px">'
       + '<div style="font-family:\'Syne\',sans-serif;font-weight:800;font-size:1rem;color:var(--lime);margin-bottom:4px">QUESTIONS OR FOLLOW-UP?</div>'
@@ -4819,12 +4758,10 @@ function showFullscreen(type) {
         el.innerHTML = ''; el.appendChild(img);
       }
     }, 100);
-    return;
-  }
+}
 
-  // ── ROLES & AUTHORITY ─────────────────────────────────────
-  if (type === 'authority') {
-    const rolesBtn = 'fsSetView(\'auth\')';
+function _fsShowAuthority(content) {
+const rolesBtn = 'fsSetView(\'auth\')';
     const sumBtn   = 'fsSetView(\'sum\')';
     const ordBtn   = 'fsSetView(\'ord\')';
     content.innerHTML = `<div style="padding:10px 0 30px" id="fs-auth-wrap">
@@ -4898,12 +4835,10 @@ function showFullscreen(type) {
         if (view) view.style.display = active ? 'block' : 'none';
       });
     };
-    return;
-  }
+}
 
-  // ── REFERENCE DOCUMENTS ───────────────────────────────────
-  if (type === 'docs') {
-    const docs = safeParseLS('creds-ref-docs', []);
+function _fsShowDocs(content) {
+const docs = safeParseLS('creds-ref-docs', []);
     let html = '<div style="padding:10px 0 30px">'
       + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">'
       + '<div style="font-family:\'Syne\',sans-serif;font-weight:800;font-size:1rem;color:var(--lime)">REFERENCE DOCUMENTS</div>'
@@ -4921,7 +4856,6 @@ function showFullscreen(type) {
     }
     html += '</div>';
     content.innerHTML = html;
-  }
 }
 
 // ── Helper: build a department contact block ──────────────────
