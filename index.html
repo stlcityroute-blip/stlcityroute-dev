@@ -2606,7 +2606,7 @@ function setStopType(type) {
 }
 
 // ── Render both stops and route together — call this instead of the pair ───────
-function renderAll() { renderAll(); }
+function renderAll() { renderStops(); renderRoute(); }
 
 function renderStops() {
   const list = document.getElementById('stops-list');
