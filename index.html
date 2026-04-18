@@ -556,11 +556,11 @@ header{
     <div style="display:flex;flex-direction:column;gap:8px">
       <button onclick="closeStopComplete()" style="padding:14px 16px;border:none;border-radius:11px;background:linear-gradient(135deg,var(--moss),var(--leaf));color:white;font-family:'Syne',sans-serif;font-weight:800;font-size:0.78rem;cursor:pointer;text-align:left">
         ✅ MARK COMPLETE
-        <div style="font-size:0.56rem;font-weight:400;opacity:0.75;margin-top:2px">Stop logged to Google Sheet and moved to completed list</div>
+        <div style="font-size:0.56rem;font-weight:400;opacity:0.75;margin-top:2px">Mark this stop done and move to completed list</div>
       </button>
       <button onclick="closeStopDelete()" style="padding:14px 16px;border:none;border-radius:11px;background:#fde8e8;color:var(--danger);font-family:'Syne',sans-serif;font-weight:800;font-size:0.78rem;cursor:pointer;text-align:left">
-        🗑 DELETE WITHOUT LOGGING
-        <div style="font-size:0.56rem;font-weight:400;opacity:0.7;margin-top:2px">Removes stop from app with no record kept</div>
+        🗑 REMOVE STOP
+        <div style="font-size:0.56rem;font-weight:400;opacity:0.7;margin-top:2px">Remove this stop from the list entirely</div>
       </button>
       <button onclick="closeCloseModal()" style="padding:10px;border:1.5px solid #ddd;border-radius:10px;background:none;color:#888;font-family:'Syne',sans-serif;font-weight:700;font-size:0.72rem;cursor:pointer">CANCEL</button>
     </div>
@@ -1238,7 +1238,7 @@ function switchTab(name) {
         await refreshRouteMap();
       } else {
         // Just re-plot GPS marker with cached fix (no full refresh)
-        const lastGPS = JSON.parse(localStorage.getItem('inspector-last-gps') || 'null');
+        const lastGPS = safeParseLS('inspector-last-gps', null);
         if (lastGPS && routeMap) {
           const { lat, lng } = lastGPS;
           if (mapGPSMarker) routeMap.removeLayer(mapGPSMarker);
@@ -1384,19 +1384,11 @@ function applyCaseloadFlagsToStop() {}
 // ============================================================
 // STATE
 // ============================================================
-// Load from atomic key first (new), fall back to legacy separate keys
+// Load from atomic inspector-data key (legacy separate keys removed — unused since 2024)
 let _savedData = null;
 try { _savedData = JSON.parse(localStorage.getItem('inspector-data') || 'null'); } catch(e) {}
-// Legacy fallback with try/catch — corrupt data returns safe empty values
-let stops = [];
-let routeOrder = [];
-if (_savedData) {
-  stops      = Array.isArray(_savedData.stops)      ? _savedData.stops      : [];
-  routeOrder = Array.isArray(_savedData.routeOrder) ? _savedData.routeOrder : [];
-} else {
-  try { stops      = JSON.parse(localStorage.getItem('inspector-stops')       || '[]'); } catch(e) { stops = []; }
-  try { routeOrder = JSON.parse(localStorage.getItem('inspector-route-order') || '[]'); } catch(e) { routeOrder = []; }
-}
+let stops      = Array.isArray(_savedData?.stops)      ? _savedData.stops      : [];
+let routeOrder = Array.isArray(_savedData?.routeOrder) ? _savedData.routeOrder : [];
 let scannedAddresses = [];
 
 // Location — safe parse, null on any error
@@ -1440,7 +1432,7 @@ function init() {
     // Surface a visible error so the user knows something went wrong
     const banner = document.createElement('div');
     banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:#c0392b;color:white;padding:14px 16px;font-family:monospace;font-size:0.75rem;line-height:1.5';
-    banner.innerHTML = '⚠ App failed to load: ' + e.message + '<br>Try clearing site data in browser settings, then reload.';
+    banner.textContent = '⚠ App failed to load: ' + e.message + ' — Try clearing site data in browser settings, then reload.';
     document.body.prepend(banner);
   }
 }
@@ -1456,8 +1448,7 @@ function _initBody() {
   stops.filter(s => !s.done && !routeOrder.includes(s.id)).forEach(s => routeOrder.push(s.id));
   saveStops();
 
-  renderStops();
-  renderRoute();
+  renderAll();
   // Restore last-used stop type on the selector
   const lastType = localStorage.getItem('last-stop-type');
   if (lastType) { const sel = document.getElementById('type-select'); if (sel) sel.value = lastType; }
@@ -1552,8 +1543,7 @@ function dupeAction(choice) {
       applyCaseloadFlagsToStop(stops[existIdx]);
     }
     saveStops();
-    renderStops();
-    renderRoute();
+    renderAll();
     showToast('Stops combined ✓');
   }
 
@@ -1940,8 +1930,7 @@ function commitStop(stop) {
   clearAddressInputs();
   const sel = document.getElementById('type-select');
   if (sel) sel.value = stop.type;
-  renderStops();
-  renderRoute();
+  renderAll();
   markRouteChanged();
   showToast('Stop added ✓' + (stop.verified === false ? ' (unverified)' : ''));
 
@@ -1982,11 +1971,8 @@ function closeStopComplete() {
   if (!s) { closeCloseModal(); return; }
   closeCloseModal();
   s.done = true;
-  s.completedAt = new Date().toISOString();
-  s.completionType = 'completed';
   saveStops();
-  renderStops();
-  renderRoute();
+  renderAll();
   markRouteChanged();
   showToast('Stop completed ✓');
 }
@@ -1998,8 +1984,7 @@ function closeStopDelete() {
   stops = stops.filter(x => x.id !== id);
   routeOrder = routeOrder.filter(x => x !== id);
   saveStops();
-  renderStops();
-  renderRoute();
+  renderAll();
   markRouteChanged();
   showToast('Stop deleted');
 }
@@ -2013,8 +1998,7 @@ function confirmDeleteAll() {
   pinnedStartId = null;
   localStorage.removeItem('inspector-pinned-start');
   saveStops();
-  renderStops();
-  renderRoute();
+  renderAll();
   markRouteChanged();
   document.getElementById('delete-all-modal').style.display = 'none';
   showToast('All stops deleted');
@@ -2487,8 +2471,6 @@ const CSB_TREE = [
 ];
 
 let _csbDescBlock = '';
-let _csbSelectedCat = null; // kept as stub — no longer used
-let _csbSelectedSub = null;
 
 // ── Build the clipboard payload ───────────────────────────────
 function _buildCsbClipboard() {
@@ -2558,22 +2540,14 @@ function openPropertySearch(addr) {
 }
 
 // ============================================================
-// COMPLETED LIST — persistent, with Restore + Delete + midnight upload
-// ============================================================
-
-// Completed stops live in stops[] with s.done===true — always persisted.
-// Each day at midnight we upload completed stops to Google Sheet
-// then clear them from the local list.
+// COMPLETED LIST — stops marked done stay in stops[] with s.done===true
 
 function undoComplete(id) {
   const s = stops.find(x => x.id === id);
   if (!s) return;
   s.done = false;
-  delete s.completedAt;
-  delete s.completionType;
   saveStops();
-  renderStops();
-  renderRoute();
+  renderAll();
   showToast('Stop restored to active list ✓');
 }
 
@@ -2581,8 +2555,7 @@ function deleteCompletedStop(id) {
   stops = stops.filter(x => x.id !== id);
   routeOrder = routeOrder.filter(x => x !== id);
   saveStops();
-  renderStops();
-  renderRoute();
+  renderAll();
   showToast('Completed stop deleted');
 }
 
@@ -2592,12 +2565,10 @@ function clearCompletedStops() {
   stops = stops.filter(s => !s.done);
   routeOrder = routeOrder.filter(id => stops.find(s => s.id === id)); // no stale refs
   saveStops();
-  renderStops();
-  renderRoute();
+  renderAll();
   showToast(`${count} completed stop${count > 1 ? 's' : ''} deleted`);
 }
 
-// ── Midnight upload of completed stops to Google Sheet ────────
 // ============================================================
 // STOP TYPE CHANGE
 // ============================================================
@@ -2629,10 +2600,13 @@ function setStopType(type) {
   // Update the add-stop selector to match
   const sel = document.getElementById('type-select');
   if (sel) sel.value = type;
-  saveStops(); renderStops(); renderRoute();
+  saveStops(); renderAll();
   closeTypeChange();
   showToast('Stop type updated ✓');
 }
+
+// ── Render both stops and route together — call this instead of the pair ───────
+function renderAll() { renderAll(); }
 
 function renderStops() {
   const list = document.getElementById('stops-list');
@@ -2728,6 +2702,19 @@ function updateLocationStatus(loc) {
   else if (loc.lat) el.textContent = `📍 ${loc.lat.toFixed(4)}, ${loc.lng.toFixed(4)}`;
 }
 
+// ── Safe localStorage JSON parse — never throws, returns fallback on corrupt data ─
+function safeParseLS(key, fallback) {
+  try { return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback)); }
+  catch(e) { return fallback; }
+}
+
+// ── Single helper for persisting manualOrigin — used in 5+ places ──────────
+function saveManualOrigin(loc) {
+  manualOrigin = loc;
+  if (loc) localStorage.setItem('inspector-manual-origin', JSON.stringify(loc));
+  else localStorage.removeItem('inspector-manual-origin');
+}
+
 async function setManualLocation() {
   const val = document.getElementById('manual-location-input').value.trim();
   if (!val) { showToast('Enter an address first'); return; }
@@ -2737,16 +2724,14 @@ async function setManualLocation() {
     const r = await fetch(url, { headers: {'User-Agent': 'STL-Inspector-App'}, signal: AbortSignal.timeout(8000) });
     const d = await r.json();
     if (!d.length) { showToast('Address not found'); return; }
-    manualOrigin = { lat: parseFloat(d[0].lat), lng: parseFloat(d[0].lon), label: val, _userTyped: true };
-    localStorage.setItem('inspector-manual-origin', JSON.stringify(manualOrigin));
+    saveManualOrigin({ lat: parseFloat(d[0].lat), lng: parseFloat(d[0].lon), label: val, _userTyped: true });
     updateLocationStatus(manualOrigin);
     showToast('Starting location set ✓');
   } catch { showToast('Geocode failed — check connection'); }
 }
 
 function clearManualLocation() {
-  manualOrigin = null;
-  localStorage.removeItem('inspector-manual-origin');
+  saveManualOrigin(null);
   document.getElementById('manual-location-input').value = '';
   document.getElementById('location-gps-status').textContent = 'GPS auto-detected on next optimize';
   showToast('Manual location cleared');
@@ -2943,16 +2928,20 @@ async function optimizeRoute() {
     showToast(`Route optimized ✓ — ${ordered.length} stops${pinNote}${endNote}`);
 
     setTimeout(() => { try { refreshRouteMap(); } catch(e) {} }, 400);
-  } catch(e) { showToast('Optimize error: ' + e.message); }
+  } catch(e) {
+    const msg = e.name === 'GeolocationPositionError' ? 'GPS unavailable — check location permissions'
+              : e.name === 'AbortError'               ? 'Request timed out — check connection'
+              : (e.message && e.message.includes('fetch')) ? 'Connection error — check signal and try again'
+              : 'Optimize failed: ' + (e.message || 'unknown error');
+    showToast(msg);
+  }
   btn.textContent = '⚡ OPTIMIZE ROUTE ORDER'; btn.disabled = false;
 }
 
 
 function renderRoute() {
   const list = document.getElementById('route-list');
-  const pending = routeOrder.length > 0
-    ? routeOrder.map(id => stops.find(s => s.id===id && !s.done)).filter(Boolean)
-    : stops.filter(s => !s.done);
+  const pending = getPendingStops();
   const done = stops.filter(s => s.done);
   const total = stops.length, doneCount = done.length;
   const pct = total ? Math.round(doneCount/total*100) : 0;
@@ -3025,8 +3014,8 @@ function renderRoute() {
     if (action === 'prop')  openPropertySearch(btn.dataset.full);
     if (action === 'close') openCloseModal(Number(btn.dataset.id));
     if (action === 'pin')   togglePinnedStart(Number(btn.dataset.id));
-    if (action === 'up')  { const idx=Number(btn.dataset.idx); if(idx>0) routeReorder(idx, idx-1); }
-    if (action === 'dn')  { const idx=Number(btn.dataset.idx); const pending=routeOrder.length>0?routeOrder.map(id=>stops.find(s=>s.id===id&&!s.done)).filter(Boolean):stops.filter(s=>!s.done); if(idx<pending.length-1) routeReorder(idx, idx+1); }
+    if (action === 'up')  { const idx = Number(btn.dataset.idx); if (idx > 0) routeReorder(idx, idx - 1); }
+    if (action === 'dn')  { const idx = Number(btn.dataset.idx); if (idx < getPendingStops().length - 1) routeReorder(idx, idx + 1); }
   });
 }
 
@@ -3042,11 +3031,16 @@ function resetRouteOrder() {
 }
 
 
-function routeReorder(fromIdx, toIdx) {
-  // Build current pending order
-  const pending = routeOrder.length > 0
-    ? routeOrder.map(id => stops.find(s => s.id===id)).filter(Boolean)
+// Canonical pending stop list — used by renderRoute, routeReorder, and action handlers
+// Single source of truth: eliminates the 3-way desync risk
+function getPendingStops() {
+  return routeOrder.length > 0
+    ? routeOrder.map(id => stops.find(s => s.id === id && !s.done)).filter(Boolean)
     : stops.filter(s => !s.done);
+}
+
+function routeReorder(fromIdx, toIdx) {
+  const pending = getPendingStops();
 
   const ids = pending.map(s => s.id);
   const [moved] = ids.splice(fromIdx, 1);
@@ -3097,8 +3091,7 @@ async function getGPSLocation() {
       });
       const lat = pos.coords.latitude, lng = pos.coords.longitude;
       const acc = pos.coords.accuracy;
-      manualOrigin = { lat, lng, label: `GPS: ${lat.toFixed(5)}, ${lng.toFixed(5)}`, accuracy: 'gps' };
-      localStorage.setItem('inspector-manual-origin', JSON.stringify(manualOrigin));
+      saveManualOrigin({ lat, lng, label: `GPS: ${lat.toFixed(5)}, ${lng.toFixed(5)}`, accuracy: 'gps' });
       localStorage.setItem('inspector-last-gps', JSON.stringify({ lat, lng, ts: Date.now() }));
       const el = document.getElementById('manual-location-input');
       if (el) el.value = manualOrigin.label;
@@ -3122,8 +3115,7 @@ async function getGPSLocation() {
   // === TIER 2: IP Geolocation fallback ===
   const ipLoc = await tryIPGeolocation();
   if (ipLoc) {
-    manualOrigin = ipLoc;
-    localStorage.setItem('inspector-manual-origin', JSON.stringify(manualOrigin));
+    saveManualOrigin(ipLoc);
     const el = document.getElementById('manual-location-input');
     if (el) el.value = ipLoc.label;
     statusEl.textContent = `📍 ${ipLoc.label} (IP approx.)`;
@@ -3133,11 +3125,10 @@ async function getGPSLocation() {
   }
 
   // === TIER 3: Last known location ===
-  const lastGPS = JSON.parse(localStorage.getItem('inspector-last-gps') || 'null');
+  const lastGPS = safeParseLS('inspector-last-gps', null);
   if (lastGPS && (Date.now() - lastGPS.ts) < 4 * 60 * 60 * 1000) { // within 4 hours
     const ageMin = Math.round((Date.now() - lastGPS.ts) / 60000);
-    manualOrigin = { lat: lastGPS.lat, lng: lastGPS.lng, label: `Last GPS (${ageMin}m ago)`, accuracy: 'cached' };
-    localStorage.setItem('inspector-manual-origin', JSON.stringify(manualOrigin));
+    saveManualOrigin({ lat: lastGPS.lat, lng: lastGPS.lng, label: `Last GPS (${ageMin}m ago)`, accuracy: 'cached' });
     const el = document.getElementById('manual-location-input');
     if (el) el.value = manualOrigin.label;
     statusEl.textContent = `📍 Last GPS location (${ageMin} min ago)`;
@@ -3173,8 +3164,7 @@ async function pingGPSOnMap() {
     const youIcon = L.divIcon({className:'',html:`<div style="background:${color};border:3px solid white;border-radius:50%;width:18px;height:18px;box-shadow:0 0 0 4px ${color}55"></div>`,iconSize:[18,18],iconAnchor:[9,9]});
     mapGPSMarker = L.marker([lat,lng],{icon:youIcon}).addTo(routeMap).bindPopup(`<b>${label}</b>`);
     routeMap.setView([lat,lng], 15);
-    manualOrigin = { lat, lng, label };
-    localStorage.setItem('inspector-manual-origin', JSON.stringify(manualOrigin));
+    saveManualOrigin({ lat, lng, label });
     localStorage.setItem('inspector-last-gps', JSON.stringify({ lat, lng, ts: Date.now() }));
   };
 
@@ -3206,7 +3196,7 @@ async function pingGPSOnMap() {
   }
 
   // Tier 3: Last known
-  const lastGPS = JSON.parse(localStorage.getItem('inspector-last-gps') || 'null');
+  const lastGPS = safeParseLS('inspector-last-gps', null);
   if (lastGPS && (Date.now() - lastGPS.ts) < 4 * 60 * 60 * 1000) {
     const ageMin = Math.round((Date.now() - lastGPS.ts) / 60000);
     plotLocation(lastGPS.lat, lastGPS.lng, `📍 Last GPS (${ageMin}m ago)`, '#8e44ad');
@@ -4320,7 +4310,11 @@ const STL_DEPARTMENTS = [
   { id:'publicservice', name:'Board of Public Service', phone:'(314) 622-4800', address:'1200 Market St., St. Louis, MO 63103', url:'https://www.stlouis-mo.gov/government/departments/public-service/' },
 ];
 
-const CITY_JOBS = [
+// CITY_JOBS loaded lazily — 59KB not parsed until roles panel first opens
+let _cityJobsCache = null;
+function getCityJobs() {
+  if (_cityJobsCache) return _cityJobsCache;
+  _cityJobsCache = [
   {
     id:'weed_inspector',
     label:'Nuisance Inspector — Weed Control (Forestry)',
@@ -4431,10 +4425,12 @@ const CITY_JOBS = [
     ord_header:'St. Louis Fire Code — IFC Adoption & Local Amendments',
     ord_body:'City of St. Louis, Missouri — Fire Prevention Enforcement Reference\n\nAUTHORITY\n\nThe City of St. Louis Fire Department Bureau of Fire Prevention enforces the International Fire Code (IFC) as locally adopted and amended, and City Code Chapter 23 (Fire Prevention).\n\nSCOPE\n\nThese regulations apply to all occupancies within the City of St. Louis, including:\n• Commercial and industrial buildings\n• Multi-family residential buildings (3 or more units)\n• Public assembly occupancies\n• Storage facilities\n\nEGRESS REQUIREMENTS\n\nAll means of egress — including exit doors, corridors, stairways, and discharge paths — must be:\n• Clear of all obstructions at all times\n• Fully illuminated with functional exit signs\n• Equipped with hardware operable from the egress side without special knowledge or effort\n• Of sufficient width and quantity for the posted occupancy load\n\nBlocking an exit or egress path is an imminent hazard requiring immediate correction. A closure order may be issued if the obstruction is not immediately removed.\n\nFIRE SUPPRESSION AND DETECTION SYSTEMS\n\n• Automatic fire sprinkler systems: annual inspection and test by a licensed fire protection contractor\n• Fire alarm systems: annual inspection, test, and certification\n• Portable fire extinguishers: monthly visual inspection by the occupant; annual service by a licensed contractor\n• Kitchen hood suppression systems: semi-annual cleaning and inspection\n\nWhen a fire suppression or detection system is out of service for more than four (4) hours, the fire department must be notified and a fire watch must be implemented.\n\nHAZARDOUS MATERIALS\n\nStorage of flammable, combustible, or hazardous materials must comply with IFC quantity limits for the occupancy classification. Requirements include:\n• Proper containers with secure lids and appropriate labeling\n• Adequate ventilation for areas where flammable vapors may accumulate\n• Safety Data Sheets (SDS) accessible on site for all hazardous materials\n• Separation from ignition sources per IFC Table requirements\n\nOCCUPANCY LOAD\n\nThe maximum posted occupancy of any occupied space may not be exceeded. For public assembly occupancies:\n• A pre-event inspection may be required for events with 300 or more attendees\n• Overcrowding is an imminent hazard requiring immediate reduction of occupancy\n\nFIREWORKS\n\nStorage, sale, and use of fireworks within the City of St. Louis is prohibited except:\n• Professional pyrotechnic displays with a valid City permit\n• Novelty sparklers and small consumer items as permitted under state law\n\nPENALTIES\n\n• Non-critical violation: $100–$500 per day after the compliance period\n• Imminent hazard non-compliance: $500–$2,000 per day\n• Operating after a closure order: $1,000–$2,000 per day plus possible criminal charges\n• Criminal prosecution for willful or knowing violations: Class A misdemeanor or higher depending on circumstances\n\nAPPEALS\n\nAppeals of any order or notice shall be filed with the Fire Code Board of Appeals within thirty (30) days. Imminent hazard closure orders are not stayed by the filing of an appeal.\n\nNote: This is a working reference. For official code text, consult the City of St. Louis Fire Department Bureau of Fire Prevention or the Municipal Code.'
   }
-];
+];;
+  return _cityJobsCache;
+}
 
 function applyJobRole(jobId) {
-  const job = CITY_JOBS.find(j => j.id === jobId);
+  const job = getCityJobs().find(j => j.id === jobId);
   if (!job) return;
   setCredsVal('roles_whoami_body', job.whoami);
   setCredsVal('roles_authority_body', job.authority);
@@ -4463,29 +4459,29 @@ const CREDS_DEFAULTS = {
   title: 'FIELD INSPECTOR',
   sub: 'Department · Division · Scope',
   roles_whoami_heading: 'WHO I AM',
-  roles_whoami_body: 'I am a duly authorized Nuisance Inspector and Code Enforcer for the City of St. Louis Forestry Division, Weed Control Section, Dept. of Parks, Recreation & Forestry.',
+  roles_whoami_body: '',
   roles_authority_heading: 'MY LEGAL AUTHORITY — §4.1',
-  roles_authority_body: '▸ Enter & inspect any private property at reasonable times (§4.1)\n▸ Issue written notices of violation (§4.2)\n▸ Order abatement by City crews/contractors on non-compliance (§6.1)\n▸ Assess costs as a lien against the property (§6.2)\n▸ Civil penalties $100–$500/day · chronic $250–$1,000/day (§8)',
+  roles_authority_body: '',
   roles_enforce_heading: 'WHAT I ENFORCE — §1, §2',
-  roles_enforce_body: '▸ Grass/weeds/brush over 7 inches (§1(a))\n▸ Fire hazard vegetation (§1(b))\n▸ Rodent/vermin harborage (§1(c))\n▸ Detrimental to neighboring property or public health (§1(d))\n▸ Entire parcel incl. setbacks & ROW (§2)',
+  roles_enforce_body: '',
   roles_exempt_heading: 'EXEMPTIONS — §3',
-  roles_exempt_body: '▸ Trees & woody shrubs — City arborists (§3(a))\n▸ Actively maintained cultivated gardens (§3(b))\n▸ Native/naturalized plantings — Commissioner discretion (§3(c))\n▸ City/government-owned property (§3(d))',
+  roles_exempt_body: '',
   sum_p1_heading: 'VIOLATION TRIGGERS — §1, §2',
-  sum_p1_body: '▸ Grass/weeds >7 inches (§1(a))\n▸ Fire hazard (§1(b)) · Rodent harborage (§1(c))\n▸ Detrimental to neighbors/public (§1(d))\n▸ Entire parcel incl. ROW & easements (§2(a))',
+  sum_p1_body: '',
   sum_p2_heading: 'EXEMPT — NOT YOUR CALL — §3',
-  sum_p2_body: '▸ Trees & woody shrubs → arborist (§3(a))\n▸ Active cultivated gardens (§3(b))\n▸ Native plantings — your discretion (§3(c))\n▸ Gov-owned property (§3(d))',
+  sum_p2_body: '',
   sum_p3_heading: 'NOTICE & TIMELINE — §4, §5',
-  sum_p3_body: '▸ Written notice required — describe violation, deadline (§4.2)\n▸ Minimum 10 days to comply (§4.2(c))\n▸ Serve by: mail, personal delivery, or post on property (§4.3)',
+  sum_p3_body: '',
   sum_p4_heading: 'CITY ABATEMENT — §6',
-  sum_p4_body: '▸ Non-compliance → City cuts, bills owner (§6.1)\n▸ Costs become a property lien (§6.2)\n▸ Due 30 days from bill, else added to tax bill (§6.3)',
+  sum_p4_body: '',
   sum_p5_heading: 'CHRONIC + PENALTIES — §7, §8',
-  sum_p5_body: '▸ Chronic = 2+ abatements OR 2+ failed notices in 12 months (§7.1)\n▸ Standard: $100–$500/day/violation (§8.1)\n▸ Chronic: $250–$1,000/day/violation (§8.2)\n▸ Each day after deadline = separate violation (§8.1)',
+  sum_p5_body: '',
   sum_p6_heading: 'APPEALS — §9',
-  sum_p6_body: '▸ Owner: 10 days to appeal to Board of Public Service (§9)\n▸ Appeal does NOT stay compliance — Board must grant stay',
+  sum_p6_body: '',
   sum_p7_heading: '⚡ FIELD DECISION FLOW',
-  sum_p7_body: 'Inspect → Violation? → Issue notice · 10-day min\nReinspect (day 10–17) → Still bad? → Cut list + letter\nLetter sent → 30-day FU clock starts\n30-day FU fail → Fine #1 · 60-day clock\n60-day FU fail → Fine #2 → Chronic threshold\n2nd abatement/fail in 12 mo → CHRONIC · enhanced daily fines\nAppeal filed? → Enforce UNLESS Board grants stay',
-  ord_header: 'ORDINANCE NO. 72059',
-  ord_body: 'City of St. Louis, Missouri\n\nSECTION 1 — DEFINITIONS\n\nCommissioner means the Commissioner of Forestry of the City of St. Louis, or his or her designee.\n\nNuisance vegetation means weeds, grasses, brush, or other vegetation growing upon any privately-owned lot, tract, or parcel of land within the City that:\n(a) exceeds seven (7) inches in height; or\n(b) constitutes a fire hazard; or\n(c) provides harborage for rodents, vermin, or other pests; or\n(d) creates a condition detrimental to neighboring property or to public health, safety, or welfare.\n\nOwner means any person, firm, corporation, or other entity having a legal or equitable interest in real property, including any mortgagee, lessee, or other person in control of the premises.\n\nSECTION 2 — PROHIBITED CONDITIONS\n\nNo owner or occupant of any privately-owned lot, tract, or parcel of land within the City of St. Louis shall permit nuisance vegetation to exist, grow, or remain upon such property. This prohibition applies to:\n(a) The entire lot, tract, or parcel, including any setback, easement, or right-of-way area abutting the property line;\n(b) Vacant lots and unimproved land;\n(c) Property adjacent to an occupied or unoccupied building or structure.\n\nSECTION 3 — EXEMPTIONS\n\nThe following are exempt from the requirements of this ordinance:\n(a) Trees and woody shrubs that are part of a maintained landscape or that are under the jurisdiction of the City Forestry Division\'s Tree Section;\n(b) Cultivated gardens, including vegetable gardens and ornamental flower beds, that are actively maintained and do not constitute a nuisance;\n(c) Native plant gardens or naturalized areas, provided they are maintained in a manner that does not create nuisance conditions for neighboring properties, subject to the Commissioner\'s determination;\n(d) Property owned or controlled by the City of St. Louis or any other governmental entity.\n\nSECTION 4 — INSPECTION AND NOTICE\n\n4.1 Inspection Authority. The Commissioner, or any duly authorized inspector, is authorized to enter upon and inspect any privately-owned property within the City at reasonable times to determine whether nuisance vegetation exists in violation of this ordinance.\n\n4.2 Written Notice. Upon determining that nuisance vegetation exists on a property, the Commissioner shall issue a written notice to the owner of the property. Such notice shall:\n(a) Describe the violation and identify the property;\n(b) State the specific corrective action required;\n(c) Specify a reasonable time period, not less than ten (10) days from the date of notice, within which the owner must correct the violation;\n(d) State the consequences of failure to comply, including the City\'s authority to perform the work and assess costs against the property.\n\n4.3 Service of Notice. Notice may be served by personal delivery, first-class mail to the owner\'s last known address as shown on the City Assessor\'s records, or by posting conspicuously on the property.\n\nSECTION 5 — OWNER\'S DUTY TO COMPLY\n\nUpon receipt of notice from the Commissioner, the owner shall, within the time period specified in such notice:\n(a) Cut, remove, or otherwise eliminate all nuisance vegetation from the property; and\n(b) Take such other corrective action as the Commissioner may specify to abate the nuisance condition.\n\nFailure to comply within the specified time period shall constitute a violation of this ordinance and shall authorize the Commissioner to proceed under Section 6.\n\nSECTION 6 — CITY ABATEMENT\n\n6.1 Authority to Abate. If an owner fails to comply with a notice issued under Section 4 within the specified time period, the Commissioner is authorized to cause the nuisance vegetation to be cut, removed, or otherwise abated by City employees or by a contractor engaged for that purpose.\n\n6.2 Cost Recovery. The costs incurred by the City in abating a nuisance condition under this section, including administrative costs, shall be assessed against the property upon which the nuisance existed. Such assessment shall constitute a lien against the property and shall be collected in the same manner as City real estate taxes.\n\n6.3 Billing. The Commissioner shall send a bill to the owner for the costs of abatement. Payment shall be due within thirty (30) days of billing. Unpaid amounts shall be certified to the City Collector for inclusion on the next tax bill for the property.\n\nSECTION 7 — CHRONIC VIOLATORS\n\n7.1 Designation. A property shall be designated a chronic violator property when the Commissioner determines that:\n(a) Nuisance vegetation has been abated by the City on the same property two (2) or more times within any twelve (12) month period; or\n(b) The owner has failed to comply with two (2) or more notices within any twelve (12) month period.\n\n7.2 Enhanced Enforcement. For properties designated as chronic violators, the Commissioner may:\n(a) Reduce the compliance period specified in any subsequent notice;\n(b) Apply enhanced penalties as provided in Section 8;\n(c) Refer the matter to the appropriate City department for additional code enforcement action;\n(d) Seek injunctive relief in a court of competent jurisdiction.\n\nSECTION 8 — PENALTIES\n\n8.1 Civil Penalty. Any owner who violates any provision of this ordinance shall be subject to a civil penalty of not less than one hundred dollars ($100) nor more than five hundred dollars ($500) per violation. Each day that a violation continues after the expiration of the compliance period specified in the notice shall constitute a separate violation.\n\n8.2 Chronic Violator Penalty. For properties designated as chronic violators under Section 7, the civil penalty shall be not less than two hundred fifty dollars ($250) nor more than one thousand dollars ($1,000) per day per violation.\n\n8.3 Collection. Civil penalties assessed under this section may be collected in any manner provided by law, including assessment as a lien against the property.\n\nSECTION 9 — APPEALS\n\nAny owner aggrieved by an order of the Commissioner under this ordinance may appeal such order to the Board of Public Service within ten (10) days of receipt of the order. The filing of an appeal shall not stay the owner\'s obligation to comply with the notice or order unless the Board specifically grants a stay.\n\nSECTION 10 — ENFORCEMENT\n\nThe Commissioner is authorized to enforce the provisions of this ordinance and may seek the assistance of the City Counselor\'s office, the Building Division, or other City agencies as necessary.\n\nSECTION 11 — SEVERABILITY\n\nIf any provision of this ordinance or its application to any person or circumstance is held invalid, the remainder of the ordinance and the application of its provisions to other persons or circumstances shall not be affected.\n\nSECTION 12 — EFFECTIVE DATE\n\nThis ordinance shall take effect and be in force from and after its passage and approval.\n\nNote: This is a working reference version of Ordinance 72059. For the official certified text, consult the City of St. Louis City Clerk or the Municipal Code at stlouis-mo.gov.',
+  sum_p7_body: '',
+  ord_header: '',
+  ord_body: '',
 };
 
 // ============================================================
@@ -4547,8 +4543,8 @@ function saveCredsCustomize() {
 }
 
 function buildDeptChecklist() {
-  const saved = JSON.parse(localStorage.getItem('creds-selected-depts') || '[]');
-  const customDepts = JSON.parse(localStorage.getItem('creds-custom-depts') || '[]');
+  const saved = safeParseLS('creds-selected-depts', []);
+  const customDepts = safeParseLS('creds-custom-depts', []);
   const allDepts = [...STL_DEPARTMENTS.filter(d => !d.alwaysShown), ...customDepts];
   const el = document.getElementById('dept-checklist');
   el.innerHTML = allDepts.map(d => {
@@ -4568,11 +4564,11 @@ function addCustomDept() {
   const address = document.getElementById('custom-dept-address').value.trim();
   const url = document.getElementById('custom-dept-url').value.trim();
   const id = 'custom_' + Date.now();
-  const custom = JSON.parse(localStorage.getItem('creds-custom-depts') || '[]');
+  const custom = safeParseLS('creds-custom-depts', []);
   custom.push({ id, name, phone, address, url, custom: true });
   localStorage.setItem('creds-custom-depts', JSON.stringify(custom));
   // Auto-select it
-  const saved = JSON.parse(localStorage.getItem('creds-selected-depts') || '[]');
+  const saved = safeParseLS('creds-selected-depts', []);
   saved.push(id);
   localStorage.setItem('creds-selected-depts', JSON.stringify(saved));
   document.getElementById('custom-dept-name').value = '';
@@ -4584,9 +4580,9 @@ function addCustomDept() {
 }
 
 function removeCustomDept(id) {
-  const custom = JSON.parse(localStorage.getItem('creds-custom-depts') || '[]').filter(d => d.id !== id);
+  const custom = safeParseLS('creds-custom-depts', []).filter(d => d.id !== id);
   localStorage.setItem('creds-custom-depts', JSON.stringify(custom));
-  const saved = JSON.parse(localStorage.getItem('creds-selected-depts') || '[]').filter(x => x !== id);
+  const saved = safeParseLS('creds-selected-depts', []).filter(x => x !== id);
   localStorage.setItem('creds-selected-depts', JSON.stringify(saved));
   buildDeptChecklist();
 }
@@ -4631,7 +4627,7 @@ function closeDocsModal() {
 function handleDocsUpload(event) {
   const files = [...event.target.files];
   if (!files.length) return;
-  const existing = JSON.parse(localStorage.getItem('creds-ref-docs') || '[]');
+  const existing = safeParseLS('creds-ref-docs', []);
   let loaded = 0;
   files.forEach(file => {
     const reader = new FileReader();
@@ -4651,7 +4647,7 @@ function handleDocsUpload(event) {
 }
 
 function renderDocsThumbs() {
-  const docs = JSON.parse(localStorage.getItem('creds-ref-docs') || '[]');
+  const docs = safeParseLS('creds-ref-docs', []);
   const el = document.getElementById('docs-thumb-list');
   if (!el) return;
   if (!docs.length) {
@@ -4669,7 +4665,7 @@ function renderDocsThumbs() {
 }
 
 function removeRefDoc(i) {
-  const docs = JSON.parse(localStorage.getItem('creds-ref-docs') || '[]');
+  const docs = safeParseLS('creds-ref-docs', []);
   docs.splice(i, 1);
   localStorage.setItem('creds-ref-docs', JSON.stringify(docs));
   renderDocsThumbs();
@@ -4800,8 +4796,8 @@ function showFullscreen(type) {
       + buildDeptContactBlock(csbDept, true);
 
     // Selected departments
-    const selectedIds = JSON.parse(localStorage.getItem('creds-selected-depts') || '[]');
-    const customDepts = JSON.parse(localStorage.getItem('creds-custom-depts') || '[]');
+    const selectedIds = safeParseLS('creds-selected-depts', []);
+    const customDepts = safeParseLS('creds-custom-depts', []);
     const allDepts = [...STL_DEPARTMENTS.filter(d => !d.alwaysShown), ...customDepts];
     selectedIds.forEach(id => {
       const dept = allDepts.find(d => d.id === id);
@@ -4884,7 +4880,7 @@ function showFullscreen(type) {
     const _jobSel = document.getElementById('job-role-select');
     if (_jobSel) {
       const _savedJob = localStorage.getItem('selected-job-role') || '';
-      CITY_JOBS.forEach(j => {
+      getCityJobs().forEach(j => {
         const opt = document.createElement('option');
         opt.value = j.id;
         opt.textContent = j.label;
@@ -4907,7 +4903,7 @@ function showFullscreen(type) {
 
   // ── REFERENCE DOCUMENTS ───────────────────────────────────
   if (type === 'docs') {
-    const docs = JSON.parse(localStorage.getItem('creds-ref-docs') || '[]');
+    const docs = safeParseLS('creds-ref-docs', []);
     let html = '<div style="padding:10px 0 30px">'
       + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">'
       + '<div style="font-family:\'Syne\',sans-serif;font-weight:800;font-size:1rem;color:var(--lime)">REFERENCE DOCUMENTS</div>'
@@ -5122,7 +5118,7 @@ try {
       <div style="font-size:2rem;margin-bottom:12px">⚠️</div>
       <div style="font-weight:800;font-size:1rem;color:#e8a020;margin-bottom:8px">App failed to start</div>
       <div style="font-size:0.65rem;color:rgba(255,255,255,0.6);font-family:'Space Mono',monospace;margin-bottom:20px;line-height:1.7">
-        ${e.message || 'Unknown error'}<br>This is usually caused by corrupted local data.
+        ${escHtml(e.message || 'Unknown error')}<br>This is usually caused by corrupted local data.
       </div>
       <button onclick="if(confirm('Clear all app data and restart?')){localStorage.clear();location.reload();}"
         style="padding:12px 24px;border:none;border-radius:10px;background:#e8a020;color:#1a1a1a;font-family:'Syne',sans-serif;font-weight:800;font-size:0.82rem;cursor:pointer">
