@@ -145,7 +145,6 @@ function listenForInstallPrompt() {
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-<!-- Tesseract.js loaded lazily on first scan — not on startup -->
 <style>
 :root {
   --forest:#0d2b6b;--moss:#1a4a9c;--leaf:#2563eb;--lime:#f5c518;
@@ -439,16 +438,6 @@ header{
       <button class="btn-sm btn-del" style="flex:1;padding:8px" onclick="clearSettingsKey()">🗑 CLEAR</button>
     </div>
 
-    <div style="height:1px;background:#eee;margin-bottom:12px"></div>
-    <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.68rem;color:var(--forest);letter-spacing:1px;margin-bottom:4px">INSPECTOR ID</div>
-    <div style="font-size:0.58rem;color:#888;font-family:'Space Mono',monospace;margin-bottom:6px">Your name or badge — identifies your entries in shared data</div>
-    <div id="settings-inspector-display" style="font-size:0.65rem;font-family:'Space Mono',monospace;color:#555;background:#f5f5f5;border-radius:8px;padding:6px 10px;margin-bottom:7px"></div>
-    <input type="text" id="settings-inspector-input" class="input-field" placeholder="e.g. Johnson, L. · Badge 42" style="margin-bottom:6px;font-size:0.72rem">
-    <div style="display:flex;gap:6px;margin-bottom:12px">
-      <button class="btn-sm btn-nav" style="flex:1;padding:8px" onclick="saveInspectorId()">💾 SAVE</button>
-      <button class="btn-sm btn-del" style="flex:1;padding:8px" onclick="clearInspectorId()">🗑 CLEAR</button>
-    </div>
-
     <button onclick="shareAppUrl()" style="width:100%;padding:9px;border:1.5px solid #aaa;border-radius:9px;background:#f5f5f5;color:#555;font-family:'Syne',sans-serif;font-weight:800;font-size:0.68rem;cursor:pointer;margin-bottom:10px">🔗 SHARE APP LINK</button>
 
     <div style="height:1px;background:#eee;margin:4px 0 12px"></div>
@@ -695,9 +684,11 @@ header{
       <div class="date-str" id="date-str">—</div>
     </div>
     <div style="display:flex;align-items:center;gap:5px;flex:1;justify-content:flex-end">
-      <button onclick="window.open('https://patreon.com/user?u=210452278&utm_medium=unknown&utm_source=join_link&utm_campaign=creatorshare_fan&utm_content=copyLink','_blank','noopener')" style="background:rgba(255,66,77,0.12);border:1px solid rgba(255,66,77,0.35);border-radius:8px;padding:5px 9px;font-family:'Syne',sans-serif;font-weight:800;font-size:0.56rem;color:#ff424d;cursor:pointer;letter-spacing:0.5px;white-space:nowrap" title="Support on Patreon">❤ PATREON</button>
-      <button onclick="openCsbNav(null)" style="background:rgba(232,160,32,0.15);border:1px solid rgba(232,160,32,0.35);border-radius:8px;padding:5px 10px;font-family:'Syne',sans-serif;font-weight:800;font-size:0.56rem;color:#e8a020;cursor:pointer;letter-spacing:0.5px;white-space:nowrap">📞 CSB</button>
-      <button onclick="openPropertySearch(null)" style="background:rgba(41,128,185,0.12);border:1px solid rgba(41,128,185,0.3);border-radius:8px;padding:5px 10px;font-family:'Syne',sans-serif;font-weight:800;font-size:0.56rem;color:#1a5276;cursor:pointer;letter-spacing:0.5px;white-space:nowrap">🏠 PROP</button>
+      <button onclick="window.open('https://patreon.com/user?u=210452278&utm_medium=unknown&utm_source=join_link&utm_campaign=creatorshare_fan&utm_content=copyLink','_blank','noopener')" style="background:rgba(255,66,77,0.12);border:1px solid rgba(255,66,77,0.35);border-radius:8px;padding:5px 7px;font-size:0.85rem;color:#ff424d;cursor:pointer;line-height:1;flex-shrink:0" title="Support on Patreon">❤</button>
+      <button onclick="window.open('https://www.courts.mo.gov/cnet/cases/newHeader.do?searchType=litigant&inputVO.courtId=ST_LOUIS_CITY__MUNICIPAL&inputVO.litigantFirstName=&inputVO.litigantLastName=','_blank','noopener')" style="background:rgba(142,68,173,0.12);border:1px solid rgba(142,68,173,0.3);border-radius:8px;padding:5px 7px;font-family:'Syne',sans-serif;font-weight:800;font-size:0.56rem;color:#6c3483;cursor:pointer;letter-spacing:0.5px;white-space:nowrap" title="Missouri Case.net — 22nd Judicial Circuit">⚖️ CASE</button>
+      <button onclick="openCsbNav(null)" style="background:rgba(232,160,32,0.15);border:1px solid rgba(232,160,32,0.35);border-radius:8px;padding:5px 7px;font-family:'Syne',sans-serif;font-weight:800;font-size:0.56rem;color:#e8a020;cursor:pointer;letter-spacing:0.5px;white-space:nowrap">📞 CSB</button>
+      <button onclick="openPropertySearch(null)" style="background:rgba(41,128,185,0.12);border:1px solid rgba(41,128,185,0.3);border-radius:8px;padding:5px 7px;font-family:'Syne',sans-serif;font-weight:800;font-size:0.56rem;color:#1a5276;cursor:pointer;letter-spacing:0.5px;white-space:nowrap">🏠 PROP</button>
+      <button onclick="openMiscLinks()" style="background:rgba(39,174,96,0.12);border:1px solid rgba(39,174,96,0.3);border-radius:8px;padding:5px 7px;font-family:'Syne',sans-serif;font-weight:800;font-size:0.56rem;color:#1e8449;cursor:pointer;letter-spacing:0.5px;white-space:nowrap" title="City contacts, links &amp; resources">📋 MISC</button>
       <button onclick="openSettings()" style="background:rgba(126,200,80,0.12);border:1px solid rgba(126,200,80,0.25);border-radius:8px;width:32px;height:32px;font-size:0.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--lime)">⚙️</button>
     </div>
   </div>
@@ -846,6 +837,7 @@ header{
         <div style="display:flex;gap:5px;margin-top:6px;flex-wrap:wrap">
           <button onclick="mapNavToActive()" style="flex:2;padding:6px 8px;border:none;border-radius:6px;background:var(--forest);color:var(--lime);font-family:'Syne',sans-serif;font-weight:800;font-size:0.65rem;cursor:pointer">🧭 NAV</button>
           <button onclick="mapPropActive()" style="flex:1;padding:6px 4px;border:1.5px solid rgba(41,128,185,0.3);border-radius:6px;background:#e8f4fd;color:#1a5276;font-family:'Syne',sans-serif;font-weight:700;font-size:0.54rem;cursor:pointer">🏠</button>
+          <button onclick="mapCsbActive()" style="flex:1;padding:6px 4px;border:1.5px solid rgba(230,81,0,0.25);border-radius:6px;background:#fff3e0;color:#e65100;font-family:'Syne',sans-serif;font-weight:700;font-size:0.54rem;cursor:pointer" title="Copy address &amp; open CSB">📋</button>
           <button onclick="mapCloseActive()" style="flex:1;padding:6px 4px;border:none;border-radius:6px;background:linear-gradient(135deg,var(--moss),var(--leaf));color:white;font-family:'Syne',sans-serif;font-weight:700;font-size:0.54rem;cursor:pointer">✓</button>
         </div>
       </div>
@@ -917,16 +909,16 @@ header{
     <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.68rem;color:var(--forest);letter-spacing:1px;margin-bottom:8px">ID CARD TEXT</div>
     <div style="margin-bottom:7px">
       <div style="font-size:0.6rem;font-family:'Syne',sans-serif;font-weight:700;color:#555;margin-bottom:3px">YOUR NAME / BADGE ID</div>
-      <input type="text" id="creds-name-input" class="input-field" placeholder="e.g. Gilbert, B. · Badge 42" style="font-size:0.72rem">
+      <input type="text" id="creds-name-input" class="input-field" placeholder="e.g. Gilbert, B. · Badge 42" style="font-size:0.72rem;width:100%;box-sizing:border-box">
       <div style="font-size:0.52rem;color:#aaa;font-family:'Space Mono',monospace;margin-top:2px">Used in CSB clipboard and completion logs. Same as Settings → Inspector ID.</div>
     </div>
     <div style="margin-bottom:7px">
       <div style="font-size:0.6rem;font-family:'Syne',sans-serif;font-weight:700;color:#555;margin-bottom:3px">TITLE / ROLE</div>
-      <input type="text" id="creds-title-input" class="input-field" placeholder="e.g. NUISANCE INSPECTOR" style="font-size:0.72rem">
+      <input type="text" id="creds-title-input" class="input-field" placeholder="e.g. NUISANCE INSPECTOR" style="font-size:0.72rem;width:100%;box-sizing:border-box">
     </div>
     <div style="margin-bottom:7px">
       <div style="font-size:0.6rem;font-family:'Syne',sans-serif;font-weight:700;color:#555;margin-bottom:3px">DIVISION / DEPARTMENT / SCOPE</div>
-      <input type="text" id="creds-sub-input" class="input-field" placeholder="e.g. Forestry Division · Weed Control · Ord. 72059" style="font-size:0.72rem">
+      <input type="text" id="creds-sub-input" class="input-field" placeholder="e.g. Forestry Division · Weed Control · Ord. 72059" style="font-size:0.72rem;width:100%;box-sizing:border-box">
     </div>
 
     <div style="height:1px;background:#eee;margin:14px 0"></div>
@@ -1237,13 +1229,10 @@ function switchTab(name) {
         _mapNeedsRefresh = false;
         await refreshRouteMap();
       } else {
-        // Just re-plot GPS marker with cached fix (no full refresh)
-        const lastGPS = safeParseLS('inspector-last-gps', null);
-        if (lastGPS && routeMap) {
-          const { lat, lng } = lastGPS;
-          if (mapGPSMarker) routeMap.removeLayer(mapGPSMarker);
-          const youIcon = L.divIcon({className:'',html:`<div style="background:#2980b9;border:3px solid white;border-radius:50%;width:18px;height:18px;box-shadow:0 0 0 4px #2980b955"></div>`,iconSize:[18,18],iconAnchor:[9,9]});
-          mapGPSMarker = L.marker([lat,lng],{icon:youIcon}).addTo(routeMap).bindPopup('<b>📡 Your location</b>');
+        // Clear any stale GPS marker — only fresh pings via GPS button should show it
+        if (mapGPSMarker && routeMap) {
+          routeMap.removeLayer(mapGPSMarker);
+          mapGPSMarker = null;
         }
       }
     }, 120);
@@ -1397,7 +1386,6 @@ let endLocation  = null;
 try { manualOrigin = JSON.parse(localStorage.getItem('inspector-manual-origin') || 'null'); } catch(e) {}
 try { endLocation  = JSON.parse(localStorage.getItem('inspector-end-location')  || 'null'); } catch(e) {}
 let pinnedStartId = localStorage.getItem('inspector-pinned-start') || null;
-let cachedRouteGeometry = null;
 let _mapNeedsRefresh = false; // set whenever route changes; cleared when map tab opens
 
 // ============================================================
@@ -1436,6 +1424,29 @@ function init() {
     document.body.prepend(banner);
   }
 }
+
+// ── Stops-list persistent delegated click listener ───────────────────────────
+// Attached once at app start via _initBody(). Works regardless of re-renders
+// because the stops-list element itself persists; only its innerHTML changes.
+function _attachStopsListListener() {
+  const list = document.getElementById('stops-list');
+  if (!list) return;
+  list.addEventListener('click', e => {
+    const btn = e.target.closest('[data-action]');
+    if (!btn) return;
+    const { action, id, addr } = btn.dataset;
+    const numId = Number(id);
+    if (action === 'nav')            navToStop(addr);
+    if (action === 'prop')           openPropertySearch(addr);
+    if (action === 'csb')            openCsbForAddress(addr);
+    if (action === 'type')           openTypeChange(numId);
+    if (action === 'close')          openCloseModal(numId);
+    if (action === 'restore')        undoComplete(numId);
+    if (action === 'del')            deleteCompletedStop(numId);
+    if (action === 'clear-completed') clearCompletedStops();
+  });
+}
+
 function _initBody() {
   const now = new Date();
   const days = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
@@ -1491,6 +1502,9 @@ function _initBody() {
 
   // Boot the INFO tab so it renders on first load
   setTimeout(() => { if (typeof initCreds === 'function') initCreds(); }, 200);
+
+  // Attach persistent delegated listener for stops-list — survives all re-renders
+  _attachStopsListListener();
 }
 
 // ============================================================
@@ -1596,28 +1610,40 @@ function addrInputChanged() {
 }
 
 // Fetch suggestions from Nominatim
+// ── Pass 1: fetch house-level Nominatim results ───────────────────────────
+async function _fetchNominatimHouses(raw, signal) {
+  const base = 'https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=6&countrycodes=us';
+  const view  = '&viewbox=' + NOMINATIM_VIEWBOX + '&bounded=1';
+  const r = await fetch(base + view + '&q=' + encodeURIComponent(raw + ', St. Louis City, MO'),
+    { headers: {'User-Agent':'STLCityRoute/1.0'}, signal });
+  const data = await r.json();
+  return data.filter(d =>
+    d.addresstype === 'house' || d.class === 'building' ||
+    (d.address && d.address.house_number)
+  );
+}
+
+// ── Pass 2: street-level fallback when no house results ───────────────────
+async function _fetchNominatimStreets(raw, signal) {
+  const base = 'https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=6&countrycodes=us';
+  const view  = '&viewbox=' + NOMINATIM_VIEWBOX + '&bounded=1';
+  const streetOnly = raw.replace(/^\d+\s*/, '');
+  if (streetOnly === raw) return []; // no house number to strip
+  const r = await fetch(base + view + '&q=' + encodeURIComponent(streetOnly + ', St. Louis City, MO'),
+    { headers: {'User-Agent':'STLCityRoute/1.0'}, signal });
+  const data = await r.json();
+  return data.filter(d =>
+    d.class === 'highway' || d.addresstype === 'road' || (d.address && d.address.road)
+  ).slice(0, 4);
+}
+
+// ── Orchestrator: two-pass search → build _addrSuggestions ───────────────
 async function fetchAddrSuggestions(raw) {
   _addrFetchCtrl = new AbortController();
   const signal = _addrFetchCtrl.signal;
 
-  // Two-pass strategy:
-  // Pass 1: strict house-level search (most accurate)
-  // Pass 2 (fallback): street-level search if pass 1 returns nothing
-  //   → shows real streets with ⚠ prefix so user knows house# not confirmed
   try {
-    const base = 'https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=6&countrycodes=us';
-    const view  = '&viewbox=' + NOMINATIM_VIEWBOX + '&bounded=1';
-    const q1    = encodeURIComponent(raw + ', St. Louis City, MO');
-    const url1  = base + view + '&q=' + q1;
-
-    const r1   = await fetch(url1, { headers: {'User-Agent':'STLCityRoute/1.0'}, signal });
-    const data1 = await r1.json();
-
-    // Filter to house/building results
-    const houses = data1.filter(d =>
-      d.addresstype === 'house' || d.class === 'building' ||
-      (d.address && d.address.house_number)
-    );
+    const houses = await _fetchNominatimHouses(raw, signal);
 
     if (houses.length > 0) {
       _addrSuggestions = houses.slice(0, 5).map(d => ({
@@ -1630,40 +1656,24 @@ async function fetchAddrSuggestions(raw) {
         note:     detectDirectionalNote(raw, d),
       }));
     } else {
-      // Pass 2: street-level — show "best guess" options
-      const streets = data1.filter(d => d.class === 'highway' || d.type === 'residential' || d.type === 'road');
-      // Also try a search without the house number for the street
-      const streetOnly = raw.replace(/^\d+\s*/, '');
-      if (streetOnly !== raw) {
-        const q2   = encodeURIComponent(streetOnly + ', St. Louis City, MO');
-        const url2 = base + view + '&q=' + q2;
-        const r2   = await fetch(url2, { headers: {'User-Agent':'STLCityRoute/1.0'}, signal });
-        const data2 = await r2.json();
-        const streetResults = data2.filter(d =>
-          d.class === 'highway' || d.addresstype === 'road' ||
-          (d.address && d.address.road)
-        ).slice(0, 4);
-
+      // Pass 2: street-level — house number not confirmed
+      const streetResults = await _fetchNominatimStreets(raw, signal);
+      if (streetResults.length > 0) {
         _addrSuggestions = streetResults.map(d => ({
-          label:    '⚠ ' + raw + ' (' + (d.address && d.address.road ? d.address.road : cleanAddress(d)) + ')',
-          address:  raw,  // keep user's input — street# not confirmed
+          label:    '\u26a0 ' + raw + ' (' + (d.address?.road || cleanAddress(d)) + ')',
+          address:  raw,
           full:     raw + ', St. Louis, MO',
           lat:      parseFloat(d.lat),
           lng:      parseFloat(d.lon),
           verified: false,
           note:     'Street found — house number not confirmed in map',
         }));
-      }
-
-      // If still nothing, add a plain "add as-is" option
-      if (_addrSuggestions.length === 0) {
+      } else {
         _addrSuggestions = [{
-          label:    '➕ Add "' + raw + '" unverified',
+          label:    '\u2795 Add "' + raw + '" unverified',
           address:  raw,
           full:     raw + ', St. Louis, MO',
-          lat:      null,
-          lng:      null,
-          verified: false,
+          lat:      null, lng: null, verified: false,
           note:     'Address not found in map — added unverified',
         }];
       }
@@ -1671,23 +1681,20 @@ async function fetchAddrSuggestions(raw) {
 
     _addrFetchCtrl = null;
     renderAddrSuggestions();
-
-    const preview = document.getElementById('addr-preview');
-    preview.style.display = 'none';
+    document.getElementById('addr-preview').style.display = 'none';
 
   } catch(e) {
     _addrFetchCtrl = null;
     if (e.name === 'AbortError') return;
-    // Network error — still allow manual add
-    const preview = document.getElementById('addr-preview');
-    preview.textContent = '⚠ Cannot verify — tap ADD to add unverified';
+    const inputVal = document.getElementById('addr-input').value.trim();
+    const preview  = document.getElementById('addr-preview');
+    preview.textContent = '\u26a0 Cannot verify — tap ADD to add unverified';
     preview.style.background = '#fff3cd';
     preview.style.color = '#856404';
     preview.style.display = 'block';
     _addrSuggestions = [{
-      label: '➕ Add "' + document.getElementById('addr-input').value.trim() + '" (offline)',
-      address: document.getElementById('addr-input').value.trim(),
-      full:     document.getElementById('addr-input').value.trim() + ', St. Louis, MO',
+      label: '\u2795 Add "' + inputVal + '" (offline)',
+      address: inputVal, full: inputVal + ', St. Louis, MO',
       lat: null, lng: null, verified: null, note: '',
     }];
     renderAddrSuggestions();
@@ -1898,7 +1905,7 @@ function closeAddrDisambig() { document.getElementById('addr-disambig-modal').st
 
 function commitStopWithAddr(addr, fullAddress, type, notes, verified, lat, lng, addrNote) {
   const stop = {
-    id: Date.now() + Math.random(),
+    id: Date.now() * 1000 + Math.floor(Math.random() * 999),
     address: addr,
     fullAddress: fullAddress,
     type: type || 'inspection',
@@ -2503,7 +2510,9 @@ function openCsbNav() {
   if (refEl && !refEl.childElementCount) {
     refEl.innerHTML = CSB_TREE.map(cat =>
       `<div style="padding:8px 10px;border-bottom:1px solid #f5f5f5">
-        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.68rem;color:var(--forest)">${escHtml(cat.label)}</div>
+        <a href="${cat.url}" target="_blank" rel="noopener" style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.68rem;color:var(--forest);text-decoration:none;display:block">
+          ${escHtml(cat.label)} <span style="font-size:0.55rem;color:var(--leaf);opacity:0.7">↗</span>
+        </a>
         <div style="font-size:0.56rem;color:#aaa;font-family:'Space Mono',monospace;margin-top:1px">${escHtml(cat.desc)}</div>
       </div>`
     ).join('');
@@ -2625,26 +2634,33 @@ function renderStops() {
   const typePillClass = t => `pill-${t||'inspection'}`;
 
   const renderStop = (s, i) => {
+    const fullAddr = escHtml(s.fullAddress || s.address + ', St. Louis, MO');
+    const addr     = escHtml(s.address);
     return `<div class="card ${s.type||'inspection'} ${s.done?'completed':''}">
       <div class="card-header">
-        <div class="stop-num">${s.done?'✓':(i+1)}</div>
+        <div class="stop-num">${s.done?'\u2713':(i+1)}</div>
         <div class="addr-block">
           <div class="addr-main">${escHtml(s.address)}</div>
           ${s.notes ? `<div class="addr-sub">${escHtml(s.notes)}</div>` : ''}
           ${s.addedAt ? `<div style="font-size:0.5rem;color:#bbb;font-family:Space Mono,monospace;margin-top:1px">Added ${new Date(s.addedAt).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</div>` : ''}
-          ${s.verified === false ? `<div style="font-size:0.52rem;color:var(--warn);font-family:'Syne',sans-serif;font-weight:700;margin-top:2px">⚠ Address unverified</div>` : ''}
-          ${s.addrNote ? `<div style="font-size:0.52rem;color:#2980b9;font-family:'Syne',sans-serif;font-weight:700;margin-top:2px">ℹ ${escHtml(s.addrNote)}</div>` : ''}
+          ${s.verified === false ? `<div style="font-size:0.52rem;color:var(--warn);font-family:'Syne',sans-serif;font-weight:700;margin-top:2px">\u26a0 Address unverified</div>` : ''}
+          ${s.addrNote ? `<div style="font-size:0.52rem;color:#2980b9;font-family:'Syne',sans-serif;font-weight:700;margin-top:2px">\u2139 ${escHtml(s.addrNote)}</div>` : ''}
         </div>
-        <span class="type-pill ${typePillClass(s.type)}" style="cursor:pointer" onclick="openTypeChange(${s.id})" title="Tap to change type">${typeLabel(s.type)}</span>
+        <span class="type-pill ${typePillClass(s.type)}" style="cursor:pointer"
+          data-action="type" data-id="${s.id}" title="Tap to change type">${typeLabel(s.type)}</span>
       </div>
       <div class="card-actions">
-        <button class="btn-sm btn-nav" onclick="navToStop('${escHtml(s.fullAddress||s.address+', St. Louis, MO')}')">🧭 NAV</button>
-
-        <button class="btn-sm btn-edit" onclick="openPropertySearch('${escHtml(s.address)}')" title="City Property Search" style="background:#e8f4fd;color:#1a5276">🏠</button>
+        <button class="btn-sm btn-nav" data-action="nav" data-addr="${fullAddr}">🧭 NAV</button>
+        <button class="btn-sm btn-edit" data-action="prop" data-addr="${addr}"
+          title="City Property Search" style="background:#e8f4fd;color:#1a5276;font-size:0.55rem">PROP</button>
+        <button class="btn-sm" data-action="csb" data-addr="${addr}"
+          title="Copy address &amp; open CSB" style="background:#fff3e0;color:#e65100;border:1.5px solid rgba(230,81,0,0.25);font-size:0.6rem">📋 CSB</button>
         ${s.done
-          ? `<button class="btn-sm btn-done" onclick="undoComplete(${s.id})" style="background:#e8f5e9;color:var(--moss)">↩ RESTORE</button>
-             <button class="btn-sm btn-del" onclick="deleteCompletedStop(${s.id})">🗑 DEL</button>`
-          : `<button class="btn-sm btn-done" style="background:linear-gradient(135deg,var(--moss),var(--leaf));color:white" onclick="openCloseModal(${s.id})">✓ CLOSE</button>`}
+          ? `<button class="btn-sm btn-done" data-action="restore" data-id="${s.id}"
+               style="background:#e8f5e9;color:var(--moss)">\u21a9 RESTORE</button>
+             <button class="btn-sm btn-del" data-action="del" data-id="${s.id}">🗑 DEL</button>`
+          : `<button class="btn-sm btn-done" data-action="close" data-id="${s.id}"
+               style="background:linear-gradient(135deg,var(--moss),var(--leaf));color:white">\u2713 CLOSE</button>`}
       </div>
     </div>`;
   };
@@ -2653,11 +2669,13 @@ function renderStops() {
   if (done.length) {
     html += `<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 4px 8px;margin-top:6px;border-top:2px solid rgba(200,230,201,0.15)">
       <span style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.65rem;color:rgba(200,230,201,0.4);letter-spacing:2px">✓ COMPLETED (${done.length})</span>
-      <button onclick="clearCompletedStops()" style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.55rem;color:rgba(200,100,100,0.6);background:none;border:none;cursor:pointer;padding:2px 6px">🗑 DELETE ALL COMPLETED</button>
+      <button data-action="clear-completed" style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.55rem;color:rgba(200,100,100,0.6);background:none;border:none;cursor:pointer;padding:2px 6px">🗑 DELETE ALL COMPLETED</button>
     </div>`;
     html += done.map((s,i) => renderStop(s, pending.length+i)).join('');
   }
   list.innerHTML = html;
+
+  // Delegated click listener is attached once at init — see _attachStopsListListener()
 }
 
 // ============================================================
@@ -2796,9 +2814,15 @@ function clearEndLocation() {
 // 2-opt improvement pass — swap pairs of stops that reduce total distance
 function twoOpt(route, origin, endpoint) {
   if (route.length < 4) return route;
+  // Cap iterations: O(n²) per pass — beyond ~80 stops, skip 2-opt to avoid UI freeze.
+  // Nearest-neighbor alone gives a good enough result for large lists.
+  if (route.length > 80) return route;
   let improved = true;
-  while (improved) {
+  let passes = 0;
+  const MAX_PASSES = 4; // Empirically: most gain in passes 1-2; cap prevents worst-case freeze
+  while (improved && passes < MAX_PASSES) {
     improved = false;
+    passes++;
     for (let i = 0; i < route.length - 1; i++) {
       for (let j = i + 2; j < route.length; j++) {
         // Cost before swap: ...→A→B→...→C→D→...
@@ -2822,112 +2846,116 @@ function twoOpt(route, origin, endpoint) {
 }
 
 
+// ── Step 1: resolve starting origin ──────────────────────────────────────
+async function _resolveOrigin(pending, statusEl) {
+  if (pinnedStartId) {
+    const pinned = pending.find(s => s.id === pinnedStartId);
+    if (pinned && pinned.lat) {
+      if (statusEl) statusEl.textContent = 'Starting from ' + pinned.address;
+      return { lat: pinned.lat, lng: pinned.lng, label: 'Pinned: ' + pinned.address };
+    }
+  }
+  const manualInput = (document.getElementById('manual-location-input')?.value || '').trim();
+  if (manualInput.length > 0 && manualOrigin) return manualOrigin;
+
+  if (statusEl) statusEl.textContent = 'Getting GPS…';
+  try {
+    const pos = await new Promise((resolve, reject) =>
+      navigator.geolocation.getCurrentPosition(resolve, reject, {timeout:10000, maximumAge:0, enableHighAccuracy:true})
+    );
+    const { latitude: lat, longitude: lng, accuracy: acc } = pos.coords;
+    localStorage.setItem('inspector-last-gps', JSON.stringify({ lat, lng, ts: Date.now(), acc: Math.round(acc) }));
+    return { lat, lng, label: 'GPS ±' + Math.round(acc) + 'm' };
+  } catch(gpserr) {
+    return getLocation();
+  }
+}
+
+// ── Step 2: geocode stops missing coordinates ─────────────────────────────
+async function _geocodeStops(pending) {
+  for (const s of pending) {
+    if (!s.lat) {
+      const c = await geocodeAddress(s.fullAddress || s.address + ', St. Louis, MO');
+      if (c) { s.lat = c.lat; s.lng = c.lng; }
+      await new Promise(r => setTimeout(r, 250));
+    }
+  }
+  return pending.filter(s => s.lat);
+}
+
+// ── Step 3: sort stops (nearest-neighbor + 2-opt) ─────────────────────────
+function _sortStops(withCoords, origin) {
+  let remaining = [...withCoords];
+  let ordered   = [];
+
+  if (pinnedStartId) {
+    const idx = remaining.findIndex(s => s.id === pinnedStartId);
+    if (idx >= 0) ordered.push(remaining.splice(idx, 1)[0]);
+  }
+
+  let cur = ordered.length ? ordered[ordered.length - 1] : origin;
+  while (remaining.length) {
+    let best = 0, bestScore = Infinity;
+    remaining.forEach((s, i) => {
+      let dist = haversineKm(cur.lat, cur.lng, s.lat, s.lng);
+      if (endLocation && remaining.length <= 4)
+        dist += haversineKm(s.lat, s.lng, endLocation.lat, endLocation.lng) * 0.3;
+      if (dist < bestScore) { bestScore = dist; best = i; }
+    });
+    ordered.push(remaining.splice(best, 1)[0]);
+    cur = ordered[ordered.length - 1];
+  }
+
+  ordered = twoOpt(ordered, origin, endLocation || null);
+
+  if (pinnedStartId) {
+    const idx = ordered.findIndex(s => s.id === pinnedStartId);
+    if (idx > 0) ordered.unshift(...ordered.splice(idx, 1));
+  }
+  return ordered;
+}
+
+// ── Orchestrator: UI state + calls the three steps ────────────────────────
 async function optimizeRoute() {
+  if (window._optimizeRunning) { showToast('Optimization already running…'); return; }
+  window._optimizeRunning = true;
+  const _optBtn = document.getElementById('optimize-btn');
+  if (_optBtn) { _optBtn.disabled = true; _optBtn.style.opacity = '0.5'; }
+  try {
+    await _optimizeRouteInner();
+  } finally {
+    window._optimizeRunning = false;
+    if (_optBtn) { _optBtn.disabled = false; _optBtn.style.opacity = ''; }
+  }
+}
+async function _optimizeRouteInner() {
   const pending = stops.filter(s => !s.done);
   if (!pending.length) { showToast('No pending stops to optimize'); return; }
-  const btn = document.getElementById('btn-optimize');
+  const btn      = document.getElementById('btn-optimize');
+  const statusEl = document.getElementById('location-gps-status');
   btn.textContent = '⏳ Getting location…'; btn.disabled = true;
 
   try {
-    // ── Determine start origin ───────────────────────────────
-    const manualInput = (document.getElementById('manual-location-input')?.value || '').trim();
-    const statusEl    = document.getElementById('location-gps-status');
-    let origin;
-
-    if (pinnedStartId) {
-      // User pinned a specific stop as the starting point
-      const pinned = pending.find(s => s.id === pinnedStartId);
-      if (pinned && pinned.lat) {
-        origin = { lat: pinned.lat, lng: pinned.lng, label: '📌 ' + pinned.address };
-        if (statusEl) statusEl.textContent = '📌 Starting from ' + pinned.address;
-      }
-    }
-
-    if (!origin && manualInput.length > 0 && manualOrigin) {
-      // User explicitly typed a start address
-      origin = manualOrigin;
-    }
-
-    if (!origin) {
-      // Default: fresh GPS ping
-      if (statusEl) statusEl.textContent = '📡 Getting GPS…';
-      try {
-        const pos = await new Promise((resolve, reject) =>
-          navigator.geolocation.getCurrentPosition(resolve, reject, {timeout:10000, maximumAge:0, enableHighAccuracy:true})
-        );
-        const { latitude: lat, longitude: lng, accuracy: acc } = pos.coords;
-        origin = { lat, lng, label: '📡 GPS ±' + Math.round(acc) + 'm' };
-        localStorage.setItem('inspector-last-gps', JSON.stringify({ lat, lng, ts: Date.now(), acc: Math.round(acc) }));
-      } catch(gpserr) {
-        origin = await getLocation(); // IP fallback
-      }
-    }
+    const origin = await _resolveOrigin(pending, statusEl);
     updateLocationStatus(origin);
 
-    // ── Geocode any stops missing coordinates ────────────────
     btn.textContent = '⏳ Geocoding stops…';
-    for (const s of pending) {
-      if (!s.lat) {
-        const c = await geocodeAddress(s.fullAddress || s.address + ', St. Louis, MO');
-        if (c) { s.lat = c.lat; s.lng = c.lng; }
-        await new Promise(r => setTimeout(r, 250));
-      }
-    }
-    const withCoords = pending.filter(s => s.lat);
-    if (!withCoords.length) { showToast('Could not geocode any stops'); btn.textContent = '⚡ OPTIMIZE ROUTE ORDER'; btn.disabled = false; return; }
+    const withCoords = await _geocodeStops(pending);
+    if (!withCoords.length) { showToast('Could not geocode any stops'); return; }
 
-    // ── Nearest-neighbor greedy (from origin, accounting for pinned start) ──
     btn.textContent = '⏳ Optimizing…';
-    let remaining = [...withCoords];
-    let ordered   = [];
-
-    // If a stop is pinned as first, place it first and start greedy from there
-    if (pinnedStartId) {
-      const idx = remaining.findIndex(s => s.id === pinnedStartId);
-      if (idx >= 0) {
-        ordered.push(remaining.splice(idx, 1)[0]);
-      }
-    }
-
-    // Greedily pick nearest remaining stop from current tail
-    let cur = ordered.length ? ordered[ordered.length - 1] : origin;
-    while (remaining.length) {
-      // If end location set, bias the last pick toward it
-      let best = 0, bestScore = Infinity;
-      remaining.forEach((s, i) => {
-        let dist = haversineKm(cur.lat, cur.lng, s.lat, s.lng);
-        // When only a few stops left, add end-point pull
-        if (endLocation && remaining.length <= 4) {
-          dist += haversineKm(s.lat, s.lng, endLocation.lat, endLocation.lng) * 0.3;
-        }
-        if (dist < bestScore) { bestScore = dist; best = i; }
-      });
-      ordered.push(remaining.splice(best, 1)[0]);
-      cur = ordered[ordered.length - 1];
-    }
-
-    // ── 2-opt improvement pass ───────────────────────────────
-    btn.textContent = '⏳ Refining…';
-    ordered = twoOpt(ordered, origin, endLocation || null);
-
-    // If stop was pinned, ensure it stays first after 2-opt
-    if (pinnedStartId) {
-      const idx = ordered.findIndex(s => s.id === pinnedStartId);
-      if (idx > 0) {
-        ordered.unshift(...ordered.splice(idx, 1));
-      }
-    }
+    const ordered = _sortStops(withCoords, origin);
 
     routeOrder = ordered.map(s => s.id);
     saveStops();
     renderRoute(); // route-only: optimize changes order, stop content unchanged
     markRouteChanged();
 
-    const endNote = endLocation ? ` → ${endLocation.label}` : '';
+    const endNote = endLocation ? ' → ' + endLocation.label : '';
     const pinNote = pinnedStartId ? ' (pinned start)' : '';
-    showToast(`Route optimized ✓ — ${ordered.length} stops${pinNote}${endNote}`);
-
+    showToast('Route optimized ✓ — ' + ordered.length + ' stops' + pinNote + endNote);
     setTimeout(() => { try { refreshRouteMap(); } catch(e) {} }, 400);
+
   } catch(e) {
     const msg = e.name === 'GeolocationPositionError' ? 'GPS unavailable — check location permissions'
               : e.name === 'AbortError'               ? 'Request timed out — check connection'
@@ -2986,7 +3014,8 @@ function renderRoute() {
         <div class="route-stop-meta">${typeLabel(s)}${s.notes?' · '+s.notes:''}</div>
         <div style="display:flex;gap:5px;margin-top:6px;flex-wrap:wrap">
           <button data-action="nav" data-addr="${escHtml(s.fullAddress||s.address+', St. Louis, MO')}" style="padding:4px 8px;border:none;border-radius:6px;background:var(--forest);color:var(--lime);font-family:'Syne',sans-serif;font-weight:700;font-size:0.56rem;cursor:pointer">🧭 NAV</button>
-          <button data-action="prop" data-full="${escHtml(s.address)}" class="btn-sm btn-edit" style="background:#e8f4fd;color:#1a5276">🏠</button>
+          <button data-action="prop" data-full="${escHtml(s.address)}" class="btn-sm btn-edit" style="background:#e8f4fd;color:#1a5276;font-size:0.55rem">PROP</button>
+          <button data-action="csb" data-addr="${escHtml(s.address)}" style="padding:4px 8px;border:1.5px solid rgba(230,81,0,0.25);border-radius:6px;background:#fff3e0;color:#e65100;font-family:'Syne',sans-serif;font-weight:700;font-size:0.56rem;cursor:pointer" title="Copy address &amp; open CSB">📋 CSB</button>
           <button data-action="pin" data-id="${s.id}" style="padding:4px 8px;border:none;border-radius:6px;font-family:'Syne',sans-serif;font-weight:700;font-size:0.56rem;cursor:pointer;${pinnedStartId===s.id?'background:#e8a020;color:#fff;':'background:#fff8ec;color:#7a5000;'}" title="${pinnedStartId===s.id?'Pinned as start — tap to unpin':'Pin as starting stop'}">${pinnedStartId===s.id?'📌 PINNED':'📌'}</button>
           <button data-action="close" data-id="${s.id}" style="padding:4px 8px;border:none;border-radius:6px;background:linear-gradient(135deg,var(--moss),var(--leaf));color:white;font-family:'Syne',sans-serif;font-weight:700;font-size:0.56rem;cursor:pointer">✓ CLOSE</button>
         </div>
@@ -3012,6 +3041,7 @@ function renderRoute() {
     const action = btn.dataset.action;
     if (action === 'nav')   navToStop(btn.dataset.addr);
     if (action === 'prop')  openPropertySearch(btn.dataset.full);
+    if (action === 'csb')   openCsbForAddress(btn.dataset.addr);
     if (action === 'close') openCloseModal(Number(btn.dataset.id));
     if (action === 'pin')   togglePinnedStart(Number(btn.dataset.id));
     if (action === 'up')  { const idx = Number(btn.dataset.idx); if (idx > 0) routeReorder(idx, idx - 1); }
@@ -3217,6 +3247,7 @@ async function pingGPSOnMap() {
 // VISUAL MAP — updated with interactive markers
 // ============================================================
 let activeMapStopId = null;
+let _pinEntry = '';  // PIN entry buffer for settings unlock
 
 let _mapRefreshInProgress = false;
 async function refreshRouteMap() {
@@ -3334,6 +3365,165 @@ function mapNavToActive() {
 function mapPropActive() {
   const s = stops.find(x => x.id === activeMapStopId);
   if (s) openPropertySearch(s.address);
+}
+function mapCsbActive() {
+  const s = stops.find(x => x.id === activeMapStopId);
+  if (s) openCsbForAddress(s.address);
+}
+
+// ── Misc City Contacts & Resources modal ─────────────────────────────────────
+function openMiscLinks() {
+  var body = document.getElementById('misc-links-body');
+  if (!body) return;
+
+  var sections = [
+    {
+      heading: '📣 LOCAL BUSINESS LISTINGS',
+      items: [
+        { label: 'Advertise here', sub: 'Local businesses — pest control, wildlife removal, towing, property law, demolition, environmental cleanup and more. Tap to view advertising options.', url: 'https://stlcityroute.com/advertise' },
+      ]
+    },
+    {
+      heading: '🔍 PROPERTY & OWNERSHIP LOOKUP',
+      items: [
+        { label: 'Address & Full Property Record', sub: 'Ownership · ward · zoning · abatement · permits in one place', url: 'https://www.stlouis-mo.gov/data/address-search/index.cfm' },
+        { label: 'City Assessor — Who Owns a Property', sub: 'Ownership search by address or name', url: 'https://www.stlouis-mo.gov/government/departments/assessor/who-owns-a-property.cfm' },
+        { label: 'Real Estate Tax History & Delinquency', sub: 'Tax status · delinquency · LRA eligibility check', url: 'https://property.stlouis-mo.gov/' },
+        { label: 'Building Permits Search by Address', sub: 'Every permit ever pulled — electrical, plumbing, demo, occupancy', url: 'https://www.stlouis-mo.gov/government/departments/public-safety/building/permits/search-building-permits-by-address.cfm' },
+        { label: 'LRA-Owned Property Search', sub: 'Check if City already owns a vacant parcel', url: 'https://www.stlouis-mo.gov/government/departments/sldc/real-estate/lra-owned-property-search.cfm' },
+        { label: 'STL Vacancy Explorer', sub: 'Vacant property map by neighborhood — LSEM/Legal Services tool', url: 'https://www.stlvacancytools.com/' },
+        { label: 'STL Open Data Portal', sub: 'All public City datasets — inspections, permits, 311 requests', url: 'https://www.stlouis-mo.gov/data/datasets/index.cfm' },
+      ]
+    },
+    {
+      heading: '⚖️ COURTS & ENFORCEMENT RECORDS',
+      items: [
+        { label: 'Missouri Case.net — 22nd Judicial Circuit', sub: 'Open cases, ordinance violations, prior enforcement by owner name', url: 'https://www.courts.mo.gov/cnet/welcome.do' },
+        { label: 'City Municipal Court Violation Search', sub: 'Look up your issued citations by case number or name', url: 'https://www.stlouis-mo.gov/government/departments/municipal-courts/city-court-violation-search.cfm' },
+        { label: 'Board of Adjustment — Zoning Variances', sub: 'Check variances and SUPs before issuing a zoning NOV', url: 'https://www.stlouis-mo.gov/government/departments/public-safety/building/zoning/board-adjustment.cfm' },
+        { label: 'Building Inspection History (Open Data)', sub: 'Complaint inspections, condemnations, vacant records by address', url: 'https://www.stlouis-mo.gov/data/datasets/dataset.cfm?id=11' },
+      ]
+    },
+    {
+      heading: '🏛️ KEY CITY DEPARTMENTS',
+      items: [
+        { label: 'Zoning Section', sub: 'Zoning district lookup · variance questions · code questions', url: 'https://www.stlouis-mo.gov/government/departments/public-safety/building/zoning/index.cfm', phone: '3146223666' },
+        { label: 'Cultural Resources Office', sub: 'Historic district review · demolition in 26 Preservation Review Districts — required before demo permit in those areas', url: 'https://www.stlouis-mo.gov/government/departments/planning/cultural-resources/index.cfm', phone: '3146573865' },
+        { label: 'Board of Public Service', sub: 'ROW encroachment permits · alley/street vacations · public improvement permits · BPS appeals', url: 'https://www.stlouis-mo.gov/government/departments/public-service/index.cfm', phone: '3146224627' },
+        { label: 'SLDC — Community Development', sub: 'LRA acquisition · neighborhood stabilization · Chapter 353 tax abatement · rehabilitation incentives', url: 'https://www.stlouis-mo.gov/government/departments/sldc/index.cfm', phone: '3146573700' },
+        { label: 'Planning & Urban Design Agency', sub: 'Zoning map · SLUP · GeoSTL parcel viewer · rezoning petitions', url: 'https://www.stlouis-mo.gov/government/departments/planning/index.cfm', phone: '3146223400' },
+        { label: 'License Collector', sub: 'Business license verification · contractor license status lookup', url: 'https://www.stlouis-mo.gov/government/departments/license/index.cfm', phone: '3146224528' },
+        { label: 'Collector of Revenue', sub: 'Property tax delinquency · lien status · real estate tax receipts', url: 'https://www.stlouis-mo.gov/government/departments/collector/index.cfm', phone: '3146224101' },
+        { label: 'Building Division — Permits Section', sub: 'Permit applications · stop-work orders · contractor licensing', url: 'https://www.stlouis-mo.gov/government/departments/public-safety/building/permits/index.cfm', phone: '3146224800' },
+        { label: 'Housing Conservation (Residential Occupancy)', sub: 'Apply for housing conservation inspection · occupancy permit', url: 'https://www.stlouis-mo.gov/government/departments/housing/index.cfm', phone: '3146224800' },
+      ]
+    },
+    {
+      heading: '🚗 VEHICLES & TOWING',
+      items: [
+        { label: 'Report Abandoned or Derelict Vehicles', sub: 'Street: no movement in 5 days = tow eligible after sticker. Private property: hazardous = tow eligible', url: 'https://www.stlouis-mo.gov/government/departments/street/street-division/abandoned-cars.cfm' },
+        { label: 'City Towing Lookup & Retrieval', sub: '7410 Hall St · Mon–Fri 9a–6p · Sat 9a–12:30p', url: 'https://www.stlouis-mo.gov/government/departments/street/towing/lookup/index.cfm', phone: '3143837546' },
+      ]
+    },
+    {
+      heading: '🔥 EMERGENCY UTILITY CONTACTS',
+      items: [
+        { label: 'Spire (Laclede Gas) — Gas Emergency', sub: 'Gas leak · gas odor · downed gas line — 24 hours', url: 'tel:+18008874173', phone: '8008874173', display: '(800) 887-4173' },
+        { label: 'AmerenUE — Electric Emergency', sub: 'Downed power line · electrical fire · outage — 24 hours', url: 'tel:+18005527583', phone: '8005527583', display: '(800) 552-7583' },
+        { label: 'MSD — Sewer Emergency & Reports', sub: 'Sewage backup · sewer overflow · illicit discharge — 24 hours', url: 'https://msdprojectclear.org/customers/problems-tips/report-issue/', phone: '3147686260', display: '(314) 768-6260' },
+        { label: 'Missouri American Water — Emergency', sub: 'Water main break · contamination concern', url: 'tel:+18006854184', phone: '8006854184', display: '(800) 685-4184' },
+        { label: 'SLMPD Non-Emergency Dispatch', sub: 'Non-emergency police — illegal occupancy assist · nuisance · property crime', url: 'tel:+13144445000', phone: '3144445000', display: '(314) 444-5000' },
+      ]
+    },
+    {
+      heading: '🌿 ENVIRONMENTAL & REGULATORY',
+      items: [
+        { label: 'Missouri DNR Air Pollution Control', sub: 'Open burning violations · asbestos NESHAP · industrial source complaints', url: 'https://www.stlouis-mo.gov/government/departments/health/index.cfm', phone: '5737514817', display: '(573) 751-4817' },
+        { label: 'DNR Environmental Emergency Hotline', sub: 'After-hours spill · release · illegal dump burning', url: 'tel:+15736342436', phone: '5736342436', display: '(573) 634-2436' },
+        { label: 'Missouri Dept of Agriculture — Weights & Measures', sub: 'Scale and fuel pump certification · condemned device support', url: 'https://www.mda.mo.gov/', phone: '5737514316', display: '(573) 751-4316' },
+        { label: 'City Department of Health', sub: 'Environmental health · food establishments · vector control · lead paint', url: 'https://www.stlouis-mo.gov/government/departments/health/index.cfm', phone: '3146224800' },
+      ]
+    },
+    {
+      heading: '📐 MAPS & GIS TOOLS',
+      items: [
+        { label: 'Cultural Resources Areas of Review Map', sub: 'Which parcels require CRO review before demo or exterior work in historic districts', url: 'https://www.stlouis-mo.gov/government/departments/planning/news/cultural-resources-preservation-board-areas-of-review-map.cfm' },
+        { label: 'Citywide Zoning District Map', sub: 'All 12 primary zoning districts and overlay districts', url: 'https://www.stlouis-mo.gov/government/departments/public-safety/building/zoning/index.cfm' },
+      ]
+    },
+    {
+      heading: '🐾 ANIMALS & WILDLIFE',
+      items: [
+        { label: 'City Animal Care & Control — Report a Problem', sub: 'Stray · cruelty · bite/attack · injured animal · deceased animal. M–F 8a–5p call ACC directly. After hours/weekends call (314) 231-1212', url: 'https://www.stlouis-mo.gov/government/departments/health/animal-care-control/report-animal-problem.cfm', phone: '3146571500' },
+        { label: 'City Animal Care & Control — After Hours', sub: 'Animal in distress after hours, weekends, and holidays', url: 'tel:+13142311212', phone: '3142311212', display: '(314) 231-1212' },
+        { label: 'CARE STL — City Shelter (2801 Clark Ave)', sub: 'Adoptions · lost pet search · foster. Managed nonprofit partner of City shelter. 7 days/week 10a–5p', url: 'https://www.icarestl.org/', phone: '3146571500' },
+        { label: 'Stray Rescue of St. Louis', sub: 'Stray and injured dogs and cats within City limits — urgent medical cases prioritized. 2320 Pine St', url: 'https://www.strayrescue.org/', phone: '3147716121' },
+        { label: 'Humane Society of Missouri', sub: 'Animal cruelty task force · adoption · low-cost vet clinic. 11660 Administration Dr (Page & Schuetz)', url: 'https://hsmo.org/', phone: '3149511588' },
+        { label: 'HSMO — Animal Cruelty Task Force', sub: 'Report suspected animal abuse or neglect — investigation and enforcement', url: 'https://hsmo.org/', phone: '3149511588' },
+        { label: 'APA of Missouri — Animal Protective Association', sub: 'Adoption center · low-cost spay/neuter · veterinary assistance fund · therapy animal programs', url: 'https://apamo.org/', phone: '3146452550' },
+        { label: 'Gateway Pet Guardians', sub: 'Low-cost spay/neuter · community cats · East St. Louis/St. Clair County focused', url: 'https://www.gatewaypetguardians.org/', phone: '6183989077' },
+        { label: 'Tenth Life Cat Rescue', sub: 'Cats and kittens — rescue, foster, adoption. City-focused TNR and feral cat programs', url: 'https://tenthlifestl.org/', phone: '3143890099' },
+        { label: 'St. Louis Feral Cat Outreach', sub: 'Feral cat TNR program — City Ordinance 69798 authorizes TNR. Colonies must be registered with City', url: 'https://www.stlouis-mo.gov/government/departments/health/animal-care-control/shelter.cfm', phone: '3146695228' },
+        { label: 'Wild Bird Rehabilitation', sub: 'Injured or orphaned SONGBIRDS — robins, cardinals, sparrows, doves, finches. 9624 Midland Blvd, Overland. 9a–5p daily', url: 'https://wildbirdrehab.org/', phone: '3144266400' },
+        { label: 'World Bird Sanctuary — Raptor Hospital', sub: 'Injured BIRDS OF PREY — hawks, owls, eagles, falcons, vultures, herons, pelicans, swans. 636-861-1392 or text a photo', url: 'https://www.worldbirdsanctuary.org/', phone: '6368611392' },
+        { label: 'Wildlife Rescue Center', sub: 'Injured/orphaned native MAMMALS (not deer), reptiles, amphibians, waterfowl, game birds. MDC and USFWS licensed', url: 'https://www.mowildlife.org/', phone: '6363941880' },
+        { label: 'Missouri Dept of Conservation — St. Louis Regional Office', sub: 'Wildlife laws · nuisance wildlife questions · deer · problem coyotes or foxes · licensed trapper referrals', url: 'https://mdc.mo.gov/', phone: '6364414554' },
+      ]
+    },
+  ];
+
+  function fmtPhone(p) {
+    // Format 10-digit string as (xxx) xxx-xxxx
+    if (!p) return '';
+    var d = p.replace(/\D/g, '');
+    if (d.length === 10) return '(' + d.slice(0,3) + ') ' + d.slice(3,6) + '-' + d.slice(6);
+    if (d.length === 11) return '(' + d.slice(1,4) + ') ' + d.slice(4,7) + '-' + d.slice(7);
+    return p;
+  }
+
+  var html = '';
+  for (var s = 0; s < sections.length; s++) {
+    var sec = sections[s];
+    html += '<div style="margin-bottom:18px">';
+    html += '<div style="font-family:\'Syne\',sans-serif;font-weight:800;font-size:0.63rem;color:var(--forest);letter-spacing:1px;margin-bottom:6px;padding-bottom:4px;border-bottom:2px solid rgba(37,99,235,0.12)">' + escHtml(sec.heading) + '</div>';
+    for (var i = 0; i < sec.items.length; i++) {
+      var item = sec.items[i];
+      var isTel = item.url && item.url.indexOf('tel:') === 0;
+      var displayPhone = item.display || (item.phone ? fmtPhone(item.phone) : '');
+      html += '<div style="padding:7px 0;border-bottom:1px solid #f5f5f5">';
+      html += '<a href="' + escHtml(item.url) + '" ' + (isTel ? '' : 'target="_blank" rel="noopener"') + ' style="font-family:\'Syne\',sans-serif;font-weight:700;font-size:0.67rem;color:var(--forest);text-decoration:none;display:block;margin-bottom:2px">';
+      html += escHtml(item.label);
+      if (!isTel) html += ' <span style="font-size:0.55rem;color:var(--leaf);opacity:0.7">\u2197</span>';
+      html += '</a>';
+      html += '<div style="font-size:0.54rem;color:#999;font-family:\'Space Mono\',monospace;line-height:1.5">' + escHtml(item.sub) + '</div>';
+      if (item.phone && !isTel) {
+        html += '<a href="tel:+1' + item.phone.replace(/\D/g,'') + '" style="display:inline-block;margin-top:3px;font-family:\'Syne\',sans-serif;font-weight:700;font-size:0.58rem;color:#27ae60;text-decoration:none;background:rgba(39,174,96,0.1);border:1px solid rgba(39,174,96,0.25);border-radius:5px;padding:2px 7px">\uD83D\uDCDE ' + escHtml(displayPhone || fmtPhone(item.phone)) + '</a>';
+      }
+      html += '</div>';
+    }
+    html += '</div>';
+  }
+
+  body.innerHTML = html;
+  document.getElementById('misc-links-modal').style.display = 'block';
+}
+
+// ── Misc City Contacts & Resources modal ─────────────────────────────────────
+
+function openCsbForAddress(addr) {
+  // Copy address to clipboard, then open CSB submit page
+  const csbUrl = 'https://www.stlouis-mo.gov/government/departments/public-safety/neighborhood-stabilization-office/citizens-service-bureau/csb-request-submit.cfm';
+  const fullAddr = addr + (addr.includes('St. Louis') ? '' : ', St. Louis, MO');
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(fullAddr).then(() => {
+      showToast('📋 Address copied — paste it into the CSB form');
+    }).catch(() => {
+      showToast('📋 Opening CSB — paste address manually');
+    });
+  } else {
+    showToast('📋 Opening CSB — paste address manually');
+  }
+  window.open(csbUrl, '_blank', 'noopener');
 }
 function mapCloseActive() {
   if (activeMapStopId) {
@@ -3587,8 +3777,7 @@ function launchGoogleMaps() {
   window.open(routeUrl, '_blank');
 }
 // ============================================================
-// PHOTO SCAN — Tesseract.js (client-side OCR, no API key)
-// Pipeline: preprocess canvas → Tesseract OCR → address extractor
+// PHOTO SCAN — Anthropic vision API (primary) or on-device TextDetector (fallback)
 // ============================================================
 
 
@@ -3676,6 +3865,11 @@ function extractAddressesFromText(rawText) {
 
 // ── Scan pipeline A: Anthropic vision API ────────────────────────────────
 async function _scanWithAnthropic(file, apiKey) {
+  // Reject images over 10MB before base64 encoding — large HEIC/RAW files
+  // could produce 15MB+ payloads that timeout or exceed API limits
+  if (file.size > 10 * 1024 * 1024) {
+    throw new Error('Image too large (max 10 MB). Try a photo at a lower resolution.');
+  }
   const base64 = await new Promise((res, rej) => {
     const r = new FileReader();
     r.onload = () => res(r.result.split(',')[1]);
@@ -3953,6 +4147,13 @@ function parsePastedText() {
   });
   const addresses = [...found];
   if (!addresses.length) { showToast('No addresses found — check format'); return; }
+  // Cap at 150 addresses — beyond this, scan import is impractical for a field route
+  const MAX_PASTE = 150;
+  const wasTruncated = addresses.length > MAX_PASTE;
+  if (wasTruncated) {
+    showToast('Showing first 150 addresses — paste was truncated');
+    addresses = addresses.slice(0, MAX_PASTE);
+  }
   scannedAddresses = addresses.map(a => ({ address: a, checked: true }));
   renderScanResults();
   document.getElementById('scan-results-panel').style.display = 'block';
@@ -3965,7 +4166,6 @@ function parsePastedText() {
 let routeMap=null, routeMapMarkers=[], routeMapPolyline=null;
 
 // STL City bounding box — never need to show anything outside this
-const STL_BOUNDS = STL_CITY_BOUNDS;
 const STL_CENTER = STL_CITY_CENTER;
 
 function initRouteMap() {
@@ -4164,21 +4364,6 @@ function clearSettingsKey() {
 // ============================================================
 function getInspectorId()  { return localStorage.getItem('inspector-id') || ''; }
 function setInspectorId(v) { if (v) localStorage.setItem('inspector-id', v); else localStorage.removeItem('inspector-id'); }
-
-function saveInspectorId() {
-  const val = document.getElementById('settings-inspector-input').value.trim();
-  if (!val) { showToast('Enter your name/ID first'); return; }
-  setInspectorId(val);
-  openSettings();
-  showToast('Inspector ID saved ✓');
-}
-
-function clearInspectorId() {
-  setInspectorId('');
-  openSettings();
-  showToast('Inspector ID cleared');
-}
-
 // ============================================================
 // SHARE APP LINK / CLIPBOARD
 // ============================================================
@@ -4248,13 +4433,21 @@ function getCityJobs() {
   {
     id:'weed_inspector',
     label:'Nuisance Inspector — Weed Control (Forestry)',
-    whoami:'I am a duly authorized Nuisance Inspector for the City of St. Louis Forestry Division, Weed Control Section, Department of Parks, Recreation & Forestry.',
-    authority:'▸ Enter & inspect any private property at reasonable times\n▸ Issue written notices of violation\n▸ Order abatement by City crews/contractors on non-compliance\n▸ Assess costs as a lien against the property\n▸ Civil penalties $100–$500/day · chronic $250–$1,000/day',
-    enforce:'▸ Grass/weeds/brush over 7 inches in height\n▸ Fire hazard vegetation\n▸ Rodent/vermin harborage vegetation\n▸ Conditions detrimental to neighboring property or public health\n▸ Entire parcel including setbacks & right-of-way',
-    exempt:'▸ Trees & woody shrubs — City Arborists jurisdiction\n▸ Actively maintained cultivated gardens\n▸ Native/naturalized plantings — Commissioner discretion\n▸ City/government-owned property',
-    summary:[{heading:'VIOLATION TRIGGERS',body:'▸ Grass/weeds >7 inches\n▸ Fire hazard · Rodent harborage\n▸ Detrimental to neighbors/public health\n▸ Entire parcel including ROW & easements'},{heading:'EXEMPT — NOT YOUR CALL',body:'▸ Trees & woody shrubs → arborist\n▸ Active cultivated gardens\n▸ Native plantings — your discretion\n▸ Government-owned property'},{heading:'NOTICE & TIMELINE',body:'▸ Written notice required — describe violation, deadline\n▸ Minimum 10 days to comply\n▸ Serve by: mail, personal delivery, or post on property'},{heading:'CITY ABATEMENT',body:'▸ Non-compliance → City cuts, bills owner\n▸ Costs become a property lien\n▸ Due 30 days from bill, else added to tax bill'},{heading:'CHRONIC + PENALTIES',body:'▸ Chronic = 2+ abatements OR 2+ failed notices in 12 months\n▸ Standard: $100–$500/day/violation\n▸ Chronic: $250–$1,000/day/violation\n▸ Each day after deadline = separate violation'},{heading:'APPEALS',body:'▸ Owner: 10 days to appeal to Board of Public Service\n▸ Appeal does NOT stay compliance — Board must grant stay'},{heading:'⚡ FIELD DECISION FLOW',body:'Inspect → Violation? → Issue notice · 10-day min\nReinspect (day 10–17) → Still bad? → Cut list + letter\nLetter sent → 30-day FU clock starts\n30-day FU fail → Fine #1 · 60-day clock\n60-day FU fail → Fine #2 → Chronic threshold\n2nd abatement/fail in 12 mo → CHRONIC · enhanced daily fines\nAppeal filed? → Enforce UNLESS Board grants stay'}],
-    ord_header:'ORDINANCE NO. 72059 — Nuisance Vegetation',
-    ord_body:'City of St. Louis, Missouri — Nuisance Vegetation (Weed Control)\n\nSECTION 1 — DEFINITIONS\n\nCommissioner means the Commissioner of Forestry of the City of St. Louis, or his or her designee.\n\nNuisance vegetation means weeds, grasses, brush, or other vegetation growing upon any privately-owned lot, tract, or parcel of land within the City that:\n(a) exceeds seven (7) inches in height; or\n(b) constitutes a fire hazard; or\n(c) provides harborage for rodents, vermin, or other pests; or\n(d) creates a condition detrimental to neighboring property or to public health, safety, or welfare.\n\nOwner means any person, firm, corporation, or other entity having a legal or equitable interest in real property.\n\nSECTION 2 — PROHIBITED CONDITIONS\n\nNo owner or occupant of any privately-owned lot, tract, or parcel within the City shall permit nuisance vegetation to exist, grow, or remain upon such property. This prohibition applies to:\n(a) The entire lot, tract, or parcel, including any setback, easement, or right-of-way area abutting the property line;\n(b) Vacant lots and unimproved land;\n(c) Property adjacent to an occupied or unoccupied building or structure.\n\nSECTION 3 — EXEMPTIONS\n\nThe following are exempt:\n(a) Trees and woody shrubs under the jurisdiction of the City Forestry Division\'s Tree Section;\n(b) Cultivated gardens, including vegetable and ornamental flower beds, actively maintained and not constituting a nuisance;\n(c) Native plant gardens or naturalized areas, maintained so as not to create nuisance conditions, subject to the Commissioner\'s determination;\n(d) Property owned or controlled by the City of St. Louis or any other governmental entity.\n\nSECTION 4 — INSPECTION AND NOTICE\n\n4.1 Inspection Authority. The Commissioner or any duly authorized inspector may enter and inspect any privately-owned property at reasonable times.\n\n4.2 Written Notice. Upon finding a violation, the Commissioner shall issue written notice to the owner:\n(a) Describing the violation and identifying the property;\n(b) Stating the required corrective action;\n(c) Specifying a compliance period of not less than ten (10) days;\n(d) Stating consequences of non-compliance.\n\n4.3 Service of Notice. Notice may be served by personal delivery, first-class mail, or posting conspicuously on the property.\n\nSECTION 5 — OWNER\'S DUTY TO COMPLY\n\nUpon receipt of notice, the owner shall within the specified period:\n(a) Cut, remove, or otherwise eliminate all nuisance vegetation; and\n(b) Take such other corrective action as the Commissioner specifies.\n\nSECTION 6 — CITY ABATEMENT\n\n6.1 Authority to Abate. If the owner fails to comply, the Commissioner may cause the nuisance to be abated by City employees or contractor.\n\n6.2 Cost Recovery. Costs incurred by the City, including administrative costs, shall be assessed against the property as a lien collected in the same manner as City real estate taxes.\n\n6.3 Billing. Payment is due within thirty (30) days. Unpaid amounts shall be certified to the City Collector for inclusion on the next tax bill.\n\nSECTION 7 — CHRONIC VIOLATORS\n\n7.1 A property is a chronic violator when:\n(a) Nuisance vegetation has been abated by the City two (2) or more times within any twelve (12) month period; or\n(b) The owner has failed to comply with two (2) or more notices within any twelve (12) month period.\n\n7.2 Enhanced Enforcement may include reduced compliance periods, enhanced penalties, referral to other City departments, or injunctive relief.\n\nSECTION 8 — PENALTIES\n\n8.1 Civil Penalty: $100–$500 per violation per day after the compliance period expires. Each day is a separate violation.\n\n8.2 Chronic Violator Penalty: $250–$1,000 per day per violation.\n\n8.3 Penalties may be collected as a lien against the property.\n\nSECTION 9 — APPEALS\n\nAny owner may appeal to the Board of Public Service within ten (10) days. Filing an appeal does not stay the obligation to comply unless the Board specifically grants a stay.\n\nSECTION 10 — ENFORCEMENT\n\nThe Commissioner may seek assistance of the City Counselor\'s office, the Building Division, or other City agencies.\n\nNote: This is a working reference. For the official certified text, consult the City of St. Louis City Clerk or stlouis-mo.gov.'
+    whoami:'I am a duly authorized Nuisance Inspector employed by the City of St. Louis Forestry Division, Weed Control Section, Department of Parks, Recreation & Forestry. I am authorized under Ordinance No. 72059 to inspect private property and enforce nuisance vegetation standards within the City of St. Louis.',
+    authority:'\u25b8 Inspect any privately-owned lot, tract, or parcel at reasonable times without warrant\n\u25b8 Issue written notices of violation to property owner or occupant\n\u25b8 Order City abatement (cut/clear) upon non-compliance\n\u25b8 Assess all City abatement costs as a lien on the property — collected as real estate taxes\n\u25b8 Civil penalties: $100\u2013$500/day per violation after compliance deadline\n\u25b8 Chronic violator penalties: $250\u2013$1,000/day per violation\n\u25b8 Seek assistance of City Counselor, Building Division, or other City agencies',
+    enforce:'\u25b8 Weeds, grasses, or brush exceeding 7 inches in height (Sec. 1 definition)\n\u25b8 Vegetation constituting a fire hazard\n\u25b8 Vegetation providing harborage for rodents, vermin, or pests\n\u25b8 Vegetation detrimental to neighboring property or public health, safety, or welfare\n\u25b8 Entire parcel — including setbacks, easements, and right-of-way abutting property line\n\u25b8 Vacant lots and unimproved land\n\u25b8 Property adjacent to occupied or unoccupied structures',
+    exempt:'\u25b8 Trees and woody shrubs — City Forestry Division Tree Section jurisdiction\n\u25b8 Cultivated gardens (vegetable or ornamental) — actively maintained, not constituting a nuisance\n\u25b8 Native or naturalized plantings — maintained to avoid nuisance conditions, subject to Commissioner determination\n\u25b8 City of St. Louis or other government-owned property',
+    summary:[
+      {heading:'VIOLATION TRIGGERS',body:'\u25b8 Any vegetation over 7 inches (grasses, weeds, brush)\n\u25b8 Fire hazard vegetation regardless of height\n\u25b8 Rodent/vermin harborage vegetation\n\u25b8 Conditions detrimental to neighbors or public health\n\u25b8 Full parcel required — ROW, setbacks, easements included'},
+      {heading:'WHAT IS EXEMPT',body:'\u25b8 Trees & woody shrubs \u2192 arborist, not your call\n\u25b8 Active cultivated gardens (veggie or flower beds)\n\u25b8 Native plantings maintained without nuisance effect\n\u25b8 Government-owned property'},
+      {heading:'NOTICE REQUIREMENTS',body:'\u25b8 Written notice required — must describe violation specifically\n\u25b8 State required corrective action and compliance deadline\n\u25b8 Minimum 10-day compliance period from date of notice\n\u25b8 Service: personal delivery, first-class mail, OR post on property'},
+      {heading:'CITY ABATEMENT',body:'\u25b8 Non-compliance after deadline \u2192 City cuts/clears property\n\u25b8 All costs (labor, equipment, admin) assessed as property lien\n\u25b8 Owner billed — payment due within 30 days\n\u25b8 Unpaid amount added to next property tax bill\n\u25b8 Lien collected same as City real estate taxes'},
+      {heading:'CHRONIC + PENALTIES',body:'\u25b8 Chronic = 2+ City abatements in 12 months, OR 2+ failed notices in 12 months\n\u25b8 Standard penalty: $100\u2013$500/day after deadline (each day = separate violation)\n\u25b8 Chronic penalty: $250\u2013$1,000/day per violation\n\u25b8 Penalties collectible as property lien'},
+      {heading:'APPEALS',body:'\u25b8 Owner may appeal to Board of Public Service within 10 days of notice\n\u25b8 Filing appeal does NOT stop compliance requirement\n\u25b8 Board must specifically grant a stay to pause enforcement'},
+      {heading:'\u26a1 FIELD DECISION FLOW',body:'1. INSPECT: Document violation with photos + exact address\n2. VIOLATION CONFIRMED? \u2192 Issue written notice same day\n   - Describe: exact vegetation type and height\n   - Set deadline: minimum 10 days from today\n   - Serve: mail + post on property\n3. REINSPECT on or after deadline (day 10\u201314):\n   - COMPLIANT \u2192 Close case, note in records\n   - NON-COMPLIANT \u2192 Submit for City abatement cut list\n4. AFTER ABATEMENT: City bills owner for costs\n   - Costs become lien if unpaid after 30 days\n5. PENALTIES: Issue civil penalty notice\n   - Each day past deadline = separate $100\u2013$500 violation\n6. CHRONIC CHECK: 2+ abatements or 2+ failed notices in 12 mo?\n   - YES \u2192 Flag as chronic \u2192 $250\u2013$1,000/day penalties\n   - Refer to City Counselor if owner disputes or refuses\n7. APPEAL RECEIVED? \u2192 Continue enforcement unless Board grants stay\nKEY: You cannot enforce on trees, active gardens, or gov property'}
+    ],
+    ord_header:'ORDINANCE NO. 72059 — Nuisance Vegetation (Weed Control)',
+    ord_body:'City of St. Louis, Missouri\nOrdinance No. 72059 — Nuisance Vegetation\n\nSECTION 1 — DEFINITIONS\n\n\"Commissioner\" means the Commissioner of Forestry of the City of St. Louis, or authorized designee.\n\n\"Nuisance vegetation\" means weeds, grasses, brush, or other vegetation on any privately-owned lot, tract, or parcel within the City that:\n  (a) exceeds seven (7) inches in height; or\n  (b) constitutes a fire hazard; or\n  (c) provides harborage for rodents, vermin, or other pests; or\n  (d) creates conditions detrimental to neighboring property or public health, safety, or welfare.\n\n\"Owner\" means any person, firm, corporation, or entity with a legal or equitable interest in real property.\n\nSECTION 2 — PROHIBITED CONDITIONS\n\nNo owner or occupant of any privately-owned lot, tract, or parcel shall permit nuisance vegetation to exist, grow, or remain upon the property. This applies to:\n  (a) The entire lot including setbacks, easements, and right-of-way abutting the property line\n  (b) Vacant and unimproved lots\n  (c) Property adjacent to any occupied or unoccupied structure\n\nSECTION 3 — EXEMPTIONS\n\n  (a) Trees and woody shrubs under City Forestry Division Tree Section jurisdiction\n  (b) Cultivated gardens (vegetable and ornamental) — actively maintained, not constituting a nuisance\n  (c) Native or naturalized plantings — maintained to avoid nuisance conditions, subject to Commissioner determination\n  (d) Property owned or controlled by the City of St. Louis or any governmental entity\n\nSECTION 4 — INSPECTION AND NOTICE\n\n4.1 The Commissioner or duly authorized inspector may enter and inspect any privately-owned property at reasonable times.\n\n4.2 Written notice shall be issued upon finding a violation, stating:\n  (a) Description of the violation and property identification\n  (b) Required corrective action\n  (c) Compliance deadline — not less than ten (10) days\n  (d) Consequences of non-compliance\n\n4.3 Notice may be served by personal delivery, first-class mail, or conspicuous posting on the property.\n\nSECTION 5 — OWNER DUTY TO COMPLY\n\nUpon notice, the owner shall within the specified period:\n  (a) Cut, remove, or eliminate all nuisance vegetation\n  (b) Take such other corrective action as the Commissioner specifies\n\nSECTION 6 — CITY ABATEMENT\n\n6.1 If the owner fails to comply, the Commissioner may cause abatement by City employees or contractors.\n\n6.2 All costs incurred by the City (labor, equipment, administrative) shall be assessed as a lien against the property, collected in the same manner as City real estate taxes.\n\n6.3 Owner shall be billed for costs. Payment due within thirty (30) days. Unpaid amounts certified to the City Collector for inclusion on the next property tax bill.\n\nSECTION 7 — CHRONIC VIOLATORS\n\n7.1 A property is a chronic violator when:\n  (a) Nuisance vegetation has been abated by the City two (2) or more times within any twelve (12) month period; or\n  (b) The owner has failed to comply with two (2) or more notices within any twelve (12) month period.\n\n7.2 Enhanced enforcement for chronic violators may include reduced compliance periods, enhanced penalties, referral to City Counselor or other City agencies, or injunctive relief.\n\nSECTION 8 — PENALTIES\n\n8.1 Standard civil penalty: $100\u2013$500 per violation per day after the compliance deadline expires. Each calendar day is a separate violation.\n\n8.2 Chronic violator penalty: $250\u2013$1,000 per day per violation.\n\n8.3 Penalties may be assessed and collected as a lien against the property.\n\nSECTION 9 — APPEALS\n\nAny owner may appeal to the Board of Public Service within ten (10) days of notice. Filing an appeal does not stay the obligation to comply unless the Board specifically grants a stay.\n\nSECTION 10 — ENFORCEMENT COOPERATION\n\nThe Commissioner may seek assistance of the City Counselor, Building Division, or other City agencies as needed.\n\nNote: Working field reference. Consult City Clerk or stlouis-mo.gov for official certified text.'
   },
   {
     id:'building_inspector',
@@ -4355,6 +4548,218 @@ function getCityJobs() {
     ord_header:'St. Louis Fire Code — IFC Adoption & Local Amendments',
     ord_body:'City of St. Louis, Missouri — Fire Prevention Enforcement Reference\n\nAUTHORITY\n\nThe City of St. Louis Fire Department Bureau of Fire Prevention enforces the International Fire Code (IFC) as locally adopted and amended, and City Code Chapter 23 (Fire Prevention).\n\nSCOPE\n\nThese regulations apply to all occupancies within the City of St. Louis, including:\n• Commercial and industrial buildings\n• Multi-family residential buildings (3 or more units)\n• Public assembly occupancies\n• Storage facilities\n\nEGRESS REQUIREMENTS\n\nAll means of egress — including exit doors, corridors, stairways, and discharge paths — must be:\n• Clear of all obstructions at all times\n• Fully illuminated with functional exit signs\n• Equipped with hardware operable from the egress side without special knowledge or effort\n• Of sufficient width and quantity for the posted occupancy load\n\nBlocking an exit or egress path is an imminent hazard requiring immediate correction. A closure order may be issued if the obstruction is not immediately removed.\n\nFIRE SUPPRESSION AND DETECTION SYSTEMS\n\n• Automatic fire sprinkler systems: annual inspection and test by a licensed fire protection contractor\n• Fire alarm systems: annual inspection, test, and certification\n• Portable fire extinguishers: monthly visual inspection by the occupant; annual service by a licensed contractor\n• Kitchen hood suppression systems: semi-annual cleaning and inspection\n\nWhen a fire suppression or detection system is out of service for more than four (4) hours, the fire department must be notified and a fire watch must be implemented.\n\nHAZARDOUS MATERIALS\n\nStorage of flammable, combustible, or hazardous materials must comply with IFC quantity limits for the occupancy classification. Requirements include:\n• Proper containers with secure lids and appropriate labeling\n• Adequate ventilation for areas where flammable vapors may accumulate\n• Safety Data Sheets (SDS) accessible on site for all hazardous materials\n• Separation from ignition sources per IFC Table requirements\n\nOCCUPANCY LOAD\n\nThe maximum posted occupancy of any occupied space may not be exceeded. For public assembly occupancies:\n• A pre-event inspection may be required for events with 300 or more attendees\n• Overcrowding is an imminent hazard requiring immediate reduction of occupancy\n\nFIREWORKS\n\nStorage, sale, and use of fireworks within the City of St. Louis is prohibited except:\n• Professional pyrotechnic displays with a valid City permit\n• Novelty sparklers and small consumer items as permitted under state law\n\nPENALTIES\n\n• Non-critical violation: $100–$500 per day after the compliance period\n• Imminent hazard non-compliance: $500–$2,000 per day\n• Operating after a closure order: $1,000–$2,000 per day plus possible criminal charges\n• Criminal prosecution for willful or knowing violations: Class A misdemeanor or higher depending on circumstances\n\nAPPEALS\n\nAppeals of any order or notice shall be filed with the Fire Code Board of Appeals within thirty (30) days. Imminent hazard closure orders are not stayed by the filing of an appeal.\n\nNote: This is a working reference. For official code text, consult the City of St. Louis Fire Department Bureau of Fire Prevention or the Municipal Code.'
   }
+  ,{
+    id:'neighborhood_improvement',
+    label:'Neighborhood Improvement Specialist — Citizens Service Bureau',
+    whoami:'I am a Neighborhood Improvement Specialist employed by the City of St. Louis Citizens Service Bureau (CSB). I conduct proactive neighborhood monitoring patrols to identify and document code violations, nuisances, and quality-of-life issues in assigned geographic areas, and coordinate referrals to the appropriate City departments for enforcement.',
+    authority:'\u25b8 Conduct proactive field inspections of assigned neighborhoods\n\u25b8 Document and photograph violations of City ordinances and codes\n\u25b8 Submit service requests and referrals through CSB to appropriate enforcement departments\n\u25b8 Communicate with residents and property owners about identified issues\n\u25b8 Coordinate multi-department responses to complex neighborhood conditions\n\u25b8 Operate as liaison between residents, CSB, and enforcement divisions',
+    enforce:'\u25b8 Overgrown vegetation / nuisance vegetation (refer to Forestry/Weed Control)\n\u25b8 Illegal dumping and litter accumulation\n\u25b8 Abandoned or deteriorating structures\n\u25b8 Inoperable or unlicensed vehicles on private property\n\u25b8 Graffiti and blight\n\u25b8 Sidewalk and alley obstructions\n\u25b8 Public health nuisances — rodents, vermin, sewage\n\u25b8 Building and housing code violations (refer to Building Division / Housing Conservation)\n\u25b8 Animal control issues (refer to Animal Control)\n\u25b8 Illegal signs and structures',
+    exempt:'\u25b8 NIS documents and refers — does not issue citations or enforce directly\n\u25b8 Criminal matters \u2192 refer to Metropolitan Police Department\n\u25b8 Utility issues \u2192 refer to appropriate utility authority\n\u25b8 Private disputes between neighbors not involving code violations',
+    summary:[
+      {heading:'YOUR ROLE',body:'\u25b8 Proactive patrol — you find issues before complaints come in\n\u25b8 Document, photograph, and submit CSB requests\n\u25b8 You are the coordinator — enforcement is done by other departments\n\u25b8 Build relationships with residents in your assigned area'},
+      {heading:'WHAT TO DOCUMENT',body:'\u25b8 Address and parcel ID (use Property Search)\n\u25b8 Type of violation — be specific (vegetation height, debris type, etc.)\n\u25b8 Photographs from public right-of-way\n\u25b8 Date, time, and your name on all records\n\u25b8 Any prior notices or history you can observe'},
+      {heading:'REFERRAL ROUTING',body:'\u25b8 Overgrown vegetation \u2192 Forestry / Weed Control (Ord. 72059)\n\u25b8 Building deterioration \u2192 Building Division\n\u25b8 Occupied housing conditions \u2192 Housing Conservation\n\u25b8 Illegal dumping \u2192 Streets Department\n\u25b8 Rodents/vectors \u2192 Department of Health\n\u25b8 Animals \u2192 Animal Control\n\u25b8 Abandoned vehicles \u2192 Police / Streets'},
+      {heading:'CSB PROCESS',body:'\u25b8 Submit service request via CSB system or 311\n\u25b8 Assign to correct department with your documentation\n\u25b8 Follow up on open requests in your area\n\u25b8 Escalate persistent or multi-department issues to supervisor'},
+      {heading:'RESIDENT INTERACTION',body:'\u25b8 Identify yourself and explain your role clearly\n\u25b8 You cannot issue fines — redirect complaints to CSB/311\n\u25b8 Do not make enforcement promises — refer to the responsible department\n\u25b8 Note resident concerns for inclusion in service requests'},
+      {heading:'SAFETY',body:'\u25b8 Never enter private property without consent or authorization\n\u25b8 Photograph from public ROW whenever possible\n\u25b8 If a situation feels unsafe, withdraw and contact police\n\u25b8 Carry City ID at all times'},
+      {heading:'\u26a1 FIELD DECISION FLOW',body:'1. PATROL assigned area — systematic block-by-block\n2. OBSERVE violation \u2192 Photograph from public ROW\n3. DOCUMENT: address, violation type, date/time, photos\n4. CLASSIFY: which department handles this?\n5. SUBMIT CSB service request with full documentation\n6. LOG stop in route app for tracking\n7. RESIDENT CONTACT (optional):\n   - Introduce yourself as NIS\n   - Explain what was observed and which dept will follow up\n   - Do NOT promise specific timelines or outcomes\n8. FOLLOW-UP: Check open requests weekly\n   - Still open after 2 weeks? \u2192 Escalate to supervisor\n9. PATTERNS: Note repeat violators for multi-dept coordination'}
+    ],
+    ord_header:'CSB — Neighborhood Improvement Specialist Program',
+    ord_body:'City of St. Louis — Neighborhood Improvement Specialist (NIS) Program\nCitizens Service Bureau\n\nROLE OVERVIEW\n\nNeighborhood Improvement Specialists conduct systematic proactive patrols of assigned geographic areas within the City of St. Louis. Unlike reactive enforcement officers who respond to complaints, NIS personnel identify violations before they are reported by residents, providing an early-intervention layer of neighborhood maintenance coordination.\n\nAUTHORITY AND SCOPE\n\nNIS personnel are authorized to:\n- Conduct foot and vehicle patrols of assigned neighborhoods\n- Observe and document potential code violations from public rights-of-way\n- Photograph conditions from public property\n- Submit service requests through the CSB system on behalf of the City\n- Communicate with residents and property owners about observed conditions\n- Coordinate multi-department responses for complex situations\n\nNIS personnel are NOT authorized to:\n- Enter private property without the owner or occupant consent (unless accompanied by a duly authorized enforcement officer)\n- Issue notices of violation, citations, or fines\n- Make enforcement decisions or promises to residents\n- Handle criminal matters (refer to SLMPD)\n\nREFERRAL STANDARDS\n\nVegetation / Weed Control: Ordinance 72059 — refer to Forestry Division Weed Control\nBuilding Conditions: IBC and City Code — refer to Building Division\nOccupied Housing: City Code Ch. 25 — refer to Housing Conservation\nIllegal Dumping / Litter: City Code Ch. 11.16 — refer to Streets Department\nRodent / Vector Control: City Code Title 10 — refer to Department of Health\nAbandoned Vehicles: City Code Ch. 17.16 — refer to Police or Streets\nAnimal Issues: City Code Ch. 10 — refer to Animal Control\n\nDOCUMENTATION STANDARDS\n\nEvery observation submitted as a CSB service request must include:\n1. Complete address (number, street, unit if applicable)\n2. Parcel ID if available (look up via Property Search)\n3. Specific violation description (e.g., \"vegetation approximately 14 inches, entire front parcel\" not just \"tall grass\")\n4. At least one photograph showing the condition\n5. Date and time of observation\n6. Submitting NIS name and badge/employee number\n\nNote: Quality documentation speeds enforcement and creates the record needed if the case proceeds to penalties or legal action.'
+  }
+
+  ,
+  {
+    id:'forestry_crew_supervisor',
+    label:'Forestry Field Crew Supervisor — Weed Control / Abatement',
+    whoami:'I am a Forestry Field Crew Supervisor for the City of St. Louis Forestry Division, Weed Control Section. I direct City abatement crews executing vegetation cutting orders on private property under Ordinance No. 72059, following notices issued by Nuisance Inspectors.',
+    authority:'▸ Direct City abatement crews cutting vegetation on properties with active abatement orders\n▸ Document all abatement work: address, date, crew, scope, equipment\n▸ Authorize crew access to private property under Commissioner abatement order (Ord. 72059 Sec. 6)\n▸ Submit work records for cost recovery billing and lien assessment\n▸ Coordinate with Nuisance Inspectors on cut list priorities and access issues\n▸ Refuse unsafe work and document refusal',
+    enforce:'▸ Properties with active abatement orders from Nuisance Inspector\n▸ Vegetation meeting nuisance definition (over 7 inches) on non-compliant parcels\n▸ Fire hazard vegetation requiring immediate clearing\n▸ Right-of-way areas abutting non-compliant private parcels\n▸ Vacant lots and unimproved land on active cut list',
+    exempt:'▸ Properties where owner complied before crew arrival - verify, document, leave\n▸ Trees and woody shrubs - refer to Urban Forestry Arborist, do not cut\n▸ Actively maintained cultivated gardens - do not cut without Inspector confirmation\n▸ Government-owned property - separate authorization required\n▸ Any property NOT on active abatement cut list',
+    summary:[{heading:'PRE-WORK CHECKLIST',body:'▸ Confirm active abatement order exists for each address\n▸ Verify address on order matches property exactly\n▸ Check for owner compliance since order was issued\n▸ Note access obstacles: locked gates, dogs, hazards\n▸ Photograph entire parcel BEFORE cutting begins'},{heading:'DURING ABATEMENT',body:'▸ Cut all vegetation to compliance level\n▸ Clear full parcel including setbacks and ROW abutting property line\n▸ Do NOT cut trees or woody shrubs - stop and call Inspector\n▸ If owner arrives claiming compliance: stop, document, call Inspector\n▸ Unsafe conditions found: stop work, document, report to supervisor'},{heading:'DOCUMENTATION REQUIRED',body:'▸ Before photo: full parcel from street\n▸ After photo: same angle as before photo\n▸ Record: date, time start/end, crew names, equipment used\n▸ Estimate area/volume of material removed\n▸ Note any conditions preventing full compliance'},{heading:'COST RECOVERY',body:'▸ All documentation feeds the billing and lien process\n▸ Incomplete records delay or defeat lien assessment\n▸ Costs include: labor, equipment, disposal fees\n▸ Submit to Division office within 24 hours of completion\n▸ Owner billed - lien filed if unpaid after 30 days'},{heading:'OWNER ON SITE',body:'▸ Identify yourself as City of St. Louis Forestry abatement crew\n▸ You are authorized under Ord. 72059 Sec. 6\n▸ Owner objects: continue work, document objection, call supervisor\n▸ Owner threatening: stop, call police, document\n▸ Never argue about the underlying notice - Inspector domain'},{heading:'SAFETY',body:'▸ PPE required: gloves, eye protection, hearing protection\n▸ Check for underground utilities before heavy equipment use\n▸ Traffic control required if cutting adjacent to street or sidewalk\n▸ Account for all crew before moving to next property\n▸ Document injuries immediately'},{heading:'⚡ FIELD DECISION FLOW',body:'1. RECEIVE cut list from Division\n2. VERIFY each address has active abatement order\n3. ARRIVE: photograph before any cutting\n4. ASSESS: owner complied? → document, skip, report to Inspector\n5. PROCEED: clear full parcel to compliance\n6. PHOTOGRAPH after - same angle as before\n7. DOCUMENT: crew, time, equipment, area cleared\n8. SUBMIT paperwork to Division within 24 hours\n9. REPORT access issues, unusual conditions, owner conflicts\nCRITICAL: Do not cut trees. Do not skip documentation. Both defeat cost recovery.'}],
+    ord_header:'Ordinance No. 72059 Sec. 6 - City Abatement Authority',
+    ord_body:'City of St. Louis - Forestry Division Weed Control\nAbatement Operations Reference\n\nAUTHORITY (Ord. 72059 Sec. 6)\n\nWhen a property owner fails to comply within the specified period, the Commissioner may cause abatement by City employees or contractor. All costs are assessed as a lien collected as City real estate taxes. Owner billed within 30 days; unpaid amounts added to next tax bill.\n\nOPERATIONAL STANDARDS\n\nWork Orders: Each deployment requires a written order referencing the underlying Inspector notice.\n\nDocumentation: Before-and-after photographs required for every property. Written records must include address, parcel ID, date, crew names, equipment, area cleared.\n\nPrivate Property Access: The abatement order provides legal authority to enter private property. Carry a copy of the underlying notice.\n\nOwner Compliance on Arrival: If owner complied between order issuance and crew arrival, do not work. Photograph, notify Inspector immediately.\n\nNote: Working field reference. Contact Division office for official orders and billing procedures.'
+  }
+  ,
+  {
+    id:'electrical_inspector',
+    label:'Electrical Inspector — Building Division (SLDC)',
+    whoami:'I am a duly authorized Electrical Inspector for the City of St. Louis Building Division, St. Louis Development Corporation (SLDC), enforcing the National Electrical Code (NEC) as locally adopted and City electrical ordinances.',
+    authority:'▸ Inspect electrical installations on permitted construction and renovation projects\n▸ Issue certificates of electrical inspection upon code compliance\n▸ Issue stop-work orders for unpermitted or non-conforming electrical work\n▸ Condemn electrical systems presenting imminent safety hazards\n▸ Refer unlicensed contractor work to the License Collector\n▸ Enter and inspect any structure during reasonable hours with proper authority',
+    enforce:'▸ Electrical work without a required permit\n▸ Work not matching approved permit drawings\n▸ Exposed wiring, unsafe connections, improper grounding\n▸ Overloaded panels, improper breaker sizing, double-tapped breakers\n▸ Work performed by unlicensed electrical contractors\n▸ Electrical deficiencies referred by Building or Housing inspectors',
+    exempt:'▸ Minor maintenance and like-for-like device replacement by owner\n▸ Low-voltage telephone, cable, and data wiring not connected to electrical system\n▸ Work expressly exempted under the adopted NEC\n▸ Work on federal property',
+    summary:[{heading:'PERMIT REQUIRED - WHEN',body:'▸ Service entrance or panel replacement or upgrade\n▸ Installation of new circuits or subpanels\n▸ Wiring for additions, renovations, or change of occupancy\n▸ Hardwired appliances: HVAC, water heaters, EV chargers\n▸ Any work requiring opening walls to access wiring'},{heading:'INSPECTION STAGES',body:'▸ Rough-in: wiring installed, boxes set, before walls closed\n▸ Service: meter base, service entrance, panel installed\n▸ Final: all devices, fixtures, and connections complete\n▸ Do NOT approve rough-in if wiring will be concealed non-compliant'},{heading:'COMMON VIOLATIONS',body:'▸ Work without permit - stop work, require permit before proceeding\n▸ Aluminum wiring on 15/20A branch circuits - requires pigtailing\n▸ Missing GFCI/AFCI protection at required locations\n▸ Insufficient clearances around panels\n▸ Non-weatherproof fixtures in wet or damp locations'},{heading:'IMMINENT HAZARD',body:'▸ Exposed live conductors: require immediate correction or disconnect\n▸ Flooded panels or water intrusion: require immediate disconnect\n▸ Evidence of arcing or burning: require immediate correction\n▸ May order utility disconnect through AmerenUE if owner non-responsive'},{heading:'STOP-WORK ORDER',body:'▸ Issue when: no permit, unsafe condition, or non-conforming work\n▸ Post on site - all electrical work must cease immediately\n▸ Permit or permit revision required before work can resume\n▸ Document condition with photographs'},{heading:'PENALTIES',body:'▸ Working without permit: $500-$1,000 per occurrence\n▸ Unlicensed contractor: refer to License Collector\n▸ Non-compliance with inspection order: $100-$500 per day\n▸ Failure to correct condemned system: may result in occupancy revocation'},{heading:'⚡ FIELD DECISION FLOW',body:'1. VERIFY: active permit on file for work being inspected?\n   NO → Issue stop-work order, require permit application\n2. INSPECT stage: rough-in, service, or final\n3. DOCUMENT all violations with photo and code citation\n4. COMPLIANT → Approve inspection, issue certificate\n5. NON-COMPLIANT → Issue correction notice with code citation\n6. Set re-inspection: typically 5-10 business days\n7. STILL NON-COMPLIANT → Civil penalty plus supervisor notification\n8. IMMINENT HAZARD found → Stop work, require immediate correction\n   Owner unavailable → Contact AmerenUE for disconnect authorization\nDOCUMENT EVERYTHING: code section, location, condition, correction required'}],
+    ord_header:'National Electrical Code (NEC) - City of St. Louis Local Adoption',
+    ord_body:'City of St. Louis - Electrical Inspection Reference\n\nAUTHORITY\nBuilding Division enforces the NEC as locally adopted and City electrical ordinances.\n\nPERMIT REQUIREMENTS\nRequired for: service replacement or upgrade, new panels or subpanels, new branch circuits, electrical work in additions or renovations, hardwired appliances.\n\nLICENSING\nAll permit-required electrical work must be by a licensed electrical contractor holding current City credentials.\n\nGFCI REQUIRED: bathrooms, kitchens, garages, outdoors, crawl spaces, unfinished basements, near pools.\nAFCI REQUIRED: bedrooms, living rooms, dining rooms in new construction and major renovations.\n\nAmerenUE Emergency: (800) 552-7583\n\nNote: Working field reference. Consult Building Division for current local amendments.'
+  }
+  ,
+  {
+    id:'plumbing_inspector',
+    label:'Plumbing Inspector — Building Division (SLDC)',
+    whoami:'I am a duly authorized Plumbing Inspector for the City of St. Louis Building Division, St. Louis Development Corporation (SLDC), enforcing the International Plumbing Code (IPC) as locally adopted and City plumbing ordinances.',
+    authority:'▸ Inspect plumbing installations on permitted construction and renovation projects\n▸ Issue certificates of plumbing inspection upon code compliance\n▸ Issue stop-work orders for unpermitted or non-conforming plumbing work\n▸ Condemn plumbing systems presenting imminent sanitation or safety hazards\n▸ Coordinate with Metropolitan St. Louis Sewer District (MSD) on sewer lateral issues\n▸ Refer unlicensed contractor work to License Collector',
+    enforce:'▸ Plumbing work without a required permit\n▸ New drain, waste, and vent (DWV) installations or modifications\n▸ Water service or supply line work\n▸ Fixture installation requiring rough-in work\n▸ Water heater replacement or installation\n▸ Sewer lateral connections or modifications\n▸ Cross-connections between potable water and non-potable sources\n▸ Illegal discharge of sewage to storm drains or ground surface',
+    exempt:'▸ Minor repairs: like-for-like faucet replacement without rough-in changes\n▸ Clearing of drain stoppages without pipe modification\n▸ Work expressly exempted under the adopted plumbing code\n▸ Work on federally governed structures',
+    summary:[{heading:'PERMIT TRIGGER',body:'▸ New fixture installation requiring rough-in\n▸ Water heater replacement (any fuel type)\n▸ Supply line or DWV system modifications\n▸ Sewer lateral work (coordinate with MSD)\n▸ Grease trap installation or modification'},{heading:'INSPECTION STAGES',body:'▸ Underground rough-in: below-slab DWV before concrete pour\n▸ Rough-in: DWV and supply in walls before closing\n▸ Water service: entry, meter, and main shut-off\n▸ Final: all fixtures, traps, and supply connections complete'},{heading:'CROSS-CONNECTION CONTROL',body:'▸ NO connection between potable water and any non-potable source\n▸ Backflow preventers required on irrigation, boilers, fire suppression\n▸ Hose bibs require vacuum breakers\n▸ Cross-connections are imminent health hazards - require immediate correction'},{heading:'SEWAGE VIOLATIONS',body:'▸ Discharge to storm drain, alley, or ground surface: immediate stop\n▸ Refer to Department of Health for environmental component\n▸ Coordinate with MSD for sewer system violations\n▸ May require immediate disconnection if sewage threatens public health'},{heading:'WATER HEATER',body:'▸ Required: T and P relief valve with proper discharge pipe\n▸ Gas: proper venting, gas connection with shut-off, combustion air\n▸ Electric: proper circuit size and disconnect within sight of unit\n▸ All: seismic strapping if required by local code'},{heading:'PENALTIES',body:'▸ Working without permit: $500-$1,000 per occurrence\n▸ Unlicensed contractor: refer to License Collector\n▸ Non-compliance with correction notice: $100-$500 per day\n▸ Illegal sewage discharge: coordinate with Health Dept for additional penalties'},{heading:'⚡ FIELD DECISION FLOW',body:'1. VERIFY: active permit on file?\n   NO → Issue stop-work order, require permit\n2. INSPECT appropriate stage: underground, rough-in, or final\n3. DOCUMENT violations with photo and code citation\n4. COMPLIANT → Approve, issue certificate\n5. NON-COMPLIANT → Correction notice, re-inspect in 5-10 days\n6. CROSS-CONNECTION found → Immediate correction required\n7. SEWAGE DISCHARGE found → Stop, document, notify Health Dept\n8. STILL FAILING → Civil penalty plus supervisor notification\nKEY: Underground inspections must happen BEFORE concrete is poured - no exceptions'}],
+    ord_header:'International Plumbing Code (IPC) - City of St. Louis Local Adoption',
+    ord_body:'City of St. Louis - Plumbing Inspection Reference\n\nAUTHORITY\nBuilding Division enforces the IPC as locally adopted. MSD has separate jurisdiction over public sewer mains and private laterals.\n\nPERMIT REQUIREMENTS\nRequired for: new fixture installations requiring rough-in, water heater replacement, new or modified supply or DWV systems, sewer lateral work, grease trap work.\n\nMSD COORDINATION\nSewer lateral work requires both a City plumbing permit and an MSD permit. Confirm MSD requirements are met before approving sewer work.\n\nCROSS-CONNECTION CONTROL\nNo physical connection may exist between potable water supply and any non-potable source. Cross-connections are among the highest-priority violations.\n\nMSD Emergency: (314) 768-6260\n\nNote: Working field reference. Consult Building Division for current local amendments.'
+  }
+  ,
+  {
+    id:'mechanical_inspector',
+    label:'Mechanical Inspector — Building Division (SLDC)',
+    whoami:'I am a duly authorized Mechanical Inspector for the City of St. Louis Building Division, St. Louis Development Corporation (SLDC), enforcing the International Mechanical Code (IMC) and International Fuel Gas Code (IFGC) as locally adopted.',
+    authority:'▸ Inspect mechanical and HVAC installations on permitted projects\n▸ Inspect fuel gas piping and appliance installations\n▸ Issue certificates of mechanical inspection upon compliance\n▸ Issue stop-work orders for unpermitted or non-conforming mechanical work\n▸ Condemn unsafe gas systems presenting immediate hazard\n▸ Coordinate with Spire (formerly Laclede Gas) for gas emergencies\n▸ Require corrective action within specified periods',
+    enforce:'▸ HVAC system installation or replacement\n▸ Fuel gas piping installation, modification, or extension\n▸ Gas appliance installation: furnaces, water heaters, boilers, ranges\n▸ Commercial kitchen ventilation and hood systems\n▸ Boiler installation or replacement\n▸ Ductwork serving new or renovated conditioned spaces\n▸ Combustion air provisions for fuel-burning appliances',
+    exempt:'▸ Like-for-like appliance replacement by existing compliant connections (verify current City policy)\n▸ Portable or plug-in mechanical equipment\n▸ Work on federally governed structures\n▸ Work expressly exempted under the adopted mechanical code',
+    summary:[{heading:'PERMIT TRIGGER',body:'▸ HVAC system replacement or new installation\n▸ Fuel gas piping installation or extension\n▸ Boiler installation or replacement\n▸ Commercial kitchen hood and exhaust installation\n▸ Ductwork serving conditioned spaces in renovation'},{heading:'GAS SYSTEM SAFETY',body:'▸ Test all gas connections with approved detection equipment\n▸ Required: shutoff valve accessible within 6 feet of each appliance\n▸ Required: sediment trap on gas supply to appliances\n▸ Flexible connectors: not concealed in walls, not kinked\n▸ GAS LEAK found → evacuate, call Spire and 911, do not proceed'},{heading:'COMBUSTION AIR',body:'▸ All fuel-burning appliances require adequate combustion air\n▸ Tight construction may require dedicated combustion air openings\n▸ Verify clearances from combustibles around all furnaces and boilers\n▸ Carbon monoxide detector required in all sleeping areas'},{heading:'VENTING REQUIREMENTS',body:'▸ Category I appliances: Type B vent, proper pitch and clearances\n▸ High-efficiency appliances: PVC vent, proper pitch and termination\n▸ Commercial equipment: Type I or Type II hood with listed exhaust fans\n▸ All vents: clear of combustibles, weather-tight penetrations'},{heading:'COMMERCIAL KITCHENS',body:'▸ Type I hood required over all cooking producing grease-laden vapors\n▸ Listed fire suppression system required in Type I hood plenum\n▸ Make-up air required to replace exhausted air volume\n▸ Clearances and grease duct construction are common violations'},{heading:'PENALTIES',body:'▸ Working without permit: $500-$1,000 per occurrence\n▸ Unlicensed gas work: refer to License Collector\n▸ Non-compliance with correction notice: $100-$500 per day\n▸ Unsafe gas system: may require Spire disconnection'},{heading:'⚡ FIELD DECISION FLOW',body:'1. VERIFY: active permit exists?\n   NO → Stop-work order, require permit\n2. INSPECT gas piping first - always check for leaks\n3. GAS LEAK → Stop all work, evacuate, call Spire and 911, document\n4. CHECK combustion air, venting, clearances, appliance listing\n5. DOCUMENT violations with photo and code citation\n6. COMPLIANT → Approve, issue certificate\n7. NON-COMPLIANT → Correction notice, set re-inspection date\n8. UNSAFE system → Require immediate correction\nSpire Emergency: (314) 342-0800\nKEY: Never approve concealment of gas piping before visual inspection'}],
+    ord_header:'International Mechanical Code / International Fuel Gas Code - STL Adoption',
+    ord_body:'City of St. Louis - Mechanical Inspection Reference\n\nAUTHORITY\nBuilding Division enforces the IMC and IFGC as locally adopted. Spire has separate authority over gas mains and meters.\n\nPERMIT REQUIREMENTS\nRequired for: HVAC installation or replacement, fuel gas piping work, gas appliance installation, boiler work, commercial kitchen hoods.\n\nLICENSING\nAll gas piping work must be by a licensed plumber or gas fitter. HVAC work must be by licensed HVAC contractor.\n\nGAS EMERGENCY CONTACTS\nSpire Emergency: (314) 342-0800 - 24 hours\nFor confirmed gas leak: evacuate, call 911 and Spire immediately.\n\nNote: Working field reference. Consult Building Division for current local amendments.'
+  }
+  ,
+  {
+    id:'dangerous_building_inspector',
+    label:'Dangerous Building Inspector — Building Division (SLDC)',
+    whoami:'I am a duly authorized Dangerous Building Inspector for the City of St. Louis Building Division, SLDC. I identify, document, and initiate enforcement action against structurally unsafe buildings under City Code Chapter 25 and the IPMC, coordinating emergency securing, boarding, and demolition referrals.',
+    authority:'▸ Inspect and evaluate structures for structural safety and dangerous conditions\n▸ Issue Dangerous Building Orders requiring repair or demolition\n▸ Order immediate vacation of structures presenting imminent collapse hazard\n▸ Order emergency boarding, fencing, or structural stabilization\n▸ Refer structures to Preservation Board and LRA for demolition proceedings\n▸ Authorize City emergency stabilization and assess costs as property lien\n▸ Coordinate with Fire, Police, and Utilities on emergencies\n▸ Enter structures suspected of being dangerous - with emergency authority',
+    enforce:'▸ Structural failure or imminent collapse: walls, floors, roof, foundation\n▸ Buildings open to trespass: unsecured doors, windows, or openings\n▸ Partially demolished or fire-damaged structures\n▸ Significant foundation movement, wall cracking, or leaning elements\n▸ Roof collapse, partial or complete\n▸ Chimneys or parapets at risk of falling onto public right-of-way\n▸ Buildings subject to active vandalism, arson, or illegal occupancy',
+    exempt:'▸ Structures clearly compliant with basic structural safety standards\n▸ Minor cosmetic deterioration without structural significance\n▸ Structures under active permitted renovation with proper site safety\n▸ Government-owned structures - separate authorization chain',
+    summary:[{heading:'IMMEDIATE THREAT ASSESSMENT',body:'▸ Is the structure an immediate threat to occupants or public?\n▸ Leaning walls, sagging roofs, open foundations = IMMEDIATE ACTION\n▸ Call Fire Dept if collapse is imminent and threatens adjacent structures\n▸ Order vacation and post NO ENTRY before completing paperwork\n▸ Document every condition with time-stamped photographs'},{heading:'DANGEROUS BUILDING ORDER',body:'▸ Describes specific dangerous conditions with locations and photos\n▸ Requires owner to: repair to safe condition OR demolish\n▸ Emergency conditions: 24-48 hours compliance\n▸ Non-emergency conditions: 30-90 days compliance period\n▸ Service: certified mail, personal delivery, AND posting on structure'},{heading:'EMERGENCY SECURING',body:'▸ City may board, fence, or brace without waiting for owner\n▸ All emergency work costs assessed as property lien\n▸ Coordinate with Building Division for City contractor deployment\n▸ Document all emergency work: contractor, scope, cost, date'},{heading:'OPEN TO TRESPASS',body:'▸ Unsecured openings invite illegal occupancy, arson, and injury\n▸ Issue notice requiring securing within 24-72 hours\n▸ Owner unresponsive: City secures, assesses costs as lien\n▸ Coordinate with Police if illegal occupants are present\n▸ Ensure utilities disconnected by utility companies'},{heading:'DEMOLITION REFERRAL',body:'▸ Structures beyond reasonable repair → refer to Preservation Board\n▸ Preservation Board may require owner to demolish or City demolishes\n▸ City demolition costs assessed as lien - can exceed property value\n▸ Document basis for demolition thoroughly - owner may appeal\n▸ LRA acquires properties after tax sale for redevelopment'},{heading:'PENALTIES',body:'▸ Failure to comply with Dangerous Building Order: $500-$1,000 per day\n▸ Illegal re-occupancy after vacation order: criminal charges possible\n▸ Failure to secure open structure: $250-$500 per day\n▸ All City emergency work costs: property lien'},{heading:'⚡ FIELD DECISION FLOW',body:'1. ARRIVE: assess from public ROW - is collapse imminent?\n   YES → Call 911, block area, do not enter\n2. ENTER if safe: document ALL dangerous conditions with photos\n3. CLASSIFY: Emergency (24-48hr) or Standard (30-90 day) order?\n4. EMERGENCY: Post NO ENTRY, issue vacation order, notify utilities\n5. STANDARD: Issue Dangerous Building Order, set compliance period\n6. UTILITIES: Notify Spire and AmerenUE to disconnect if unoccupied\n7. OPEN TO TRESPASS: require immediate securing\n8. OWNER UNREACHABLE: City emergency board/fence, assess as lien\n9. COMPLIANCE DEADLINE: re-inspect - compliant or escalate to demolition\nSpire Emergency: (314) 342-0800   AmerenUE Emergency: (800) 552-7583'}],
+    ord_header:'City Code Chapter 25 / IPMC - Dangerous Buildings',
+    ord_body:'City of St. Louis - Dangerous Building Enforcement Reference\n\nAUTHORITY\nBuilding Division enforces City Code Chapter 25 (Dangerous Buildings) and IPMC as locally adopted. Preservation Board has jurisdiction over demolition of potentially historic structures.\n\nDANGEROUS BUILDING DEFINED\nA structure is dangerous when it: presents structural failure risk, is open to trespassers, has been partially demolished or burned, or presents falling hazard over public space.\n\nEMERGENCY AUTHORITY\nIn an emergency, the Building Commissioner may order immediate vacation, securing, or stabilization without prior notice. All costs are assessed as a property lien.\n\nEMERGENCY CONTACTS\nSpire: (314) 342-0800   AmerenUE: (800) 552-7583   STL Police Non-Emergency: (314) 444-5000\n\nNote: Working field reference. Consult Building Division for current code and procedures.'
+  }
+  ,
+  {
+    id:'vector_control',
+    label:'Vector Control Specialist — Department of Health',
+    whoami:'I am a Vector Control Specialist for the City of St. Louis Department of Health. I conduct targeted rodent and pest abatement on public and private property, respond to vector complaints, inspect properties for harborage conditions, and issue correction notices under City Code Title 10.',
+    authority:'▸ Inspect private and public property for rodent and pest harborage conditions\n▸ Conduct rodent baiting and abatement on public rights-of-way and City property\n▸ Issue notices of violation to property owners for harborage conditions\n▸ Order corrective action: eliminate harborage, food sources, entry points\n▸ Collect rodent specimens for disease surveillance when required\n▸ Investigate and document 311 and CSB vector complaints\n▸ Coordinate with Nuisance Inspector when vegetation contributes to harborage',
+    enforce:'▸ Active rodent infestation: burrows, droppings, gnaw marks, live sightings\n▸ Harborage conditions: debris piles, abandoned vehicles, overgrown vegetation\n▸ Food sources attracting vectors: improperly stored refuse, composting, animal feed\n▸ Structural entry points: holes or gaps in foundation\n▸ Standing water attracting mosquitoes or other vectors\n▸ Active infestations in food establishments (coordinate with Environmental Health)',
+    exempt:'▸ Isolated single insects not indicative of infestation\n▸ Wildlife protected under state law - consult MDC\n▸ Interior structural pest control in occupied buildings (licensed contractor domain)\n▸ Federal property',
+    summary:[{heading:'IDENTIFYING ACTIVE INFESTATION',body:'▸ Fresh burrows: clean, open holes without debris accumulation\n▸ Active runways: grass or vegetation matted in trails\n▸ Fresh droppings: dark, moist, distinct shape\n▸ Fresh gnaw marks: light-colored, rough edges\n▸ Live sightings during day: suggests large population\n▸ Photograph all evidence with date and time stamp'},{heading:'HARBORAGE CONDITIONS',body:'▸ Dense vegetation over 7 inches (coordinate with Weed Control)\n▸ Lumber, debris, or junk piles in contact with ground\n▸ Abandoned vehicles providing shelter\n▸ Open refuse containers or improperly stored garbage\n▸ Compost without rodent-resistant containers\n▸ Bird feeders with ground accumulation of seed'},{heading:'NOTICE REQUIREMENTS',body:'▸ Written notice describing conditions specifically\n▸ Standard: 10 days for harborage removal\n▸ Emergency in food facility: 24-48 hours\n▸ Required actions: eliminate food source, remove harborage, seal entry points\n▸ Service: mail plus posting on property'},{heading:'TREATMENT OPERATIONS',body:'▸ Public ROW and City property: City may treat without notice\n▸ Private property: requires owner consent OR post-notice non-compliance\n▸ Bait placement: tamper-resistant stations only in accessible areas\n▸ Document: location, bait type and amount, date, return check date\n▸ Return within 2 weeks to check consumption and restock'},{heading:'DISEASE SURVEILLANCE',body:'▸ Report unusual rodent die-offs to supervisor - possible disease event\n▸ Specimen collection: follow Department protocol for handling and packaging\n▸ Report any evidence of plague, leptospirosis, or hantavirus exposure risk'},{heading:'PENALTIES',body:'▸ Harborage non-compliance: $100-$500 per day after deadline\n▸ Food establishment infestation: coordinate with Environmental Health for closure\n▸ City treatment costs on private property: assessed as lien\n▸ Repeat offenders: refer to City Counselor for civil action'},{heading:'⚡ FIELD DECISION FLOW',body:'1. RECEIVE complaint or identify property on patrol\n2. INSPECT: evidence of active infestation? Document with photos\n3. IDENTIFY harborage sources: vegetation, debris, food, entry points\n4. ACTIVE INFESTATION on public ROW → treat immediately, document\n5. ACTIVE INFESTATION on private property → issue notice\n   Food establishment → notify Environmental Health same day\n6. HARBORAGE ONLY → issue notice, 10-day compliance\n7. TREAT adjacent ROW immediately regardless\n8. REINSPECT after compliance deadline\n9. NON-COMPLIANT → City treatment, assess costs, civil penalty\n10. FOLLOW UP: return in 2 weeks to check bait and assess re-infestation\nKEY: Coordinate with Weed Control when vegetation is primary harborage'}],
+    ord_header:'City Code Title 10 - Vector and Rodent Control',
+    ord_body:'City of St. Louis - Vector Control Operations Reference\n\nAUTHORITY\nDepartment of Health enforces City Code Title 10 provisions governing rodent and vector control. Authority to inspect private property, issue correction notices, and conduct abatement on public property and, following non-compliance, on private property.\n\nSTANDARD COMPLIANCE PERIODS\nNon-emergency harborage: 10 days\nActive infestation on private property: 5-7 days\nActive infestation in food establishment: 24-48 hours (coordinate with Environmental Health)\nEmergency threat to public health: immediate\n\nCOORDINATION\nCoordinate with Environmental Health Inspector for food establishments, Weed Control for vegetation harborage, Streets Department for alley conditions.\n\nNote: Working field reference. Consult Department of Health for current protocols and approved treatment materials.'
+  }
+  ,
+  {
+    id:'air_quality_inspector',
+    label:'Air Quality Inspector — Health Dept / Missouri DNR Partnership',
+    whoami:'I am an Air Quality Inspector for the City of St. Louis Department of Health, working in partnership with the Missouri Department of Natural Resources (DNR) Air Pollution Control Program. I enforce air quality regulations including prohibitions on open burning and asbestos abatement site compliance.',
+    authority:'▸ Inspect open burning complaints and issue citations and stop orders\n▸ Inspect illegal dump sites, especially those with burning\n▸ Conduct asbestos abatement site inspections during renovation and demolition\n▸ Issue Notice of Violation for air quality violations\n▸ Coordinate with Missouri DNR on stationary source complaints\n▸ Coordinate with Fire Department on illegal burning',
+    enforce:'▸ Open burning of refuse, yard waste, construction debris, or tires within City limits\n▸ Illegal dump sites with evidence of burning\n▸ Asbestos-containing materials disturbed without proper abatement procedures\n▸ Renovation or demolition of pre-1980 structures without required asbestos survey\n▸ Visible emissions from stationary sources exceeding opacity standards\n▸ Use of uncertified refrigerant recovery practices',
+    exempt:'▸ Recreational campfires in designated park areas with permit\n▸ Controlled burns by Fire Department for training with notification\n▸ Stationary industrial sources with Missouri DNR operating permits (DNR leads)\n▸ Indoor air quality in non-industrial settings (OSHA jurisdiction)',
+    summary:[{heading:'OPEN BURNING VIOLATIONS',body:'▸ All open burning of refuse is prohibited within City limits\n▸ Yard waste burning: prohibited - use City compost or bag for collection\n▸ Construction debris burning: prohibited - serious criminal penalties\n▸ Tire burning: felony under Missouri law - refer to police\n▸ Document: location, materials burning, photos from safe distance\n▸ Issue stop order immediately'},{heading:'ILLEGAL DUMP SITES',body:'▸ Coordinate with Streets Dept and Refuse Enforcement for dump documentation\n▸ Evidence of burning at dump site elevates to air quality violation\n▸ Photograph burned materials: type, quantity, evidence of fire\n▸ Asbestos risk at dumps with construction debris - do not disturb\n▸ Identify responsible party if possible'},{heading:'ASBESTOS ABATEMENT SITES',body:'▸ Pre-1980 buildings undergoing renovation or demolition require asbestos survey\n▸ Survey must be by Missouri-accredited inspector\n▸ Friable ACM must be removed by licensed contractor before demolition\n▸ Check for: wet methods, HEPA vacuums, proper disposal bags and manifests\n▸ Worker respiratory protection: minimum half-face respirator with P100 filters\n▸ Stop work if ACM being disturbed without proper procedures'},{heading:'COMMON ACM LOCATIONS',body:'▸ Floor tiles, pipe insulation, duct insulation, roof materials\n▸ Textured ceilings (popcorn), joint compound in older construction\n▸ ACM undisturbed and in good condition is NOT a violation\n▸ VIOLATION: disturbing ACM without proper abatement controls\n▸ Visible asbestos dust or fiber release = immediate stop work'},{heading:'SMOKE AND ODOR COMPLAINTS',body:'▸ Document complaint source with GPS and photos\n▸ Identify source property and owner\n▸ Large industrial sources: coordinate with Missouri DNR - do not act unilaterally\n▸ Document time and weather conditions at observation'},{heading:'PENALTIES',body:'▸ Open burning: $100-$500 per occurrence plus possible state penalties\n▸ Asbestos violation: up to $25,000 per day under state law\n▸ Refer criminal violations to City Counselor and Missouri DNR\n▸ Construction debris burning: coordinate police referral'},{heading:'⚡ FIELD DECISION FLOW',body:'1. RECEIVE complaint or identify violation on patrol\n2. DOCUMENT from safe distance: photos, GPS, time, weather\n3. OPEN BURNING → issue stop order, document materials burning\n   Tires burning → call police - felony\n4. ILLEGAL DUMP with burning → document, notice to property owner\n   Asbestos materials present → do not disturb, flag for licensed abatement\n5. ASBESTOS SITE → request permit and survey documentation\n   No permit or survey → stop work order immediately\n   ACM disturbed improperly → stop work, notify DNR and Building Division\n6. INDUSTRIAL SOURCE complaint → document, coordinate with Missouri DNR\n7. ISSUE Notice of Violation, set compliance period\nMissouri DNR Air Pollution Control: (573) 751-4817\nSAFETY: Do not approach actively burning illegal dumps - call Fire Dept first'}],
+    ord_header:'City Code / Missouri Clean Air Act - Air Quality Enforcement',
+    ord_body:'City of St. Louis - Air Quality Enforcement Reference\n\nAUTHORITY\nDepartment of Health in partnership with Missouri DNR Air Pollution Control Program enforces air quality regulations within the City.\n\nOPEN BURNING\nOpen burning of any refuse or waste is prohibited without a specific exemption.\n\nASBESTOS REQUIREMENTS (NESHAP - 40 CFR Part 61 Subpart M)\nPre-1980 structures: asbestos survey required before demolition or renovation. Survey by Missouri-accredited inspector. Removal by licensed abatement contractor. Notification to Missouri DNR before demolition of structures with regulated ACM.\n\nMissouri DNR Air Pollution Control: (573) 751-4817\nDNR Emergency reporting: (573) 634-2436\n\nNote: Working field reference. Consult Department of Health and Missouri DNR for current regulations.'
+  }
+  ,
+  {
+    id:'traffic_inspector',
+    label:'Traffic Engineering Inspector — Streets Department',
+    whoami:'I am a Traffic Engineering Inspector for the City of St. Louis Streets Department, Traffic Engineering Division. I inspect traffic control devices, signage, pavement markings, and signal equipment within the City for MUTCD compliance, document deficiencies, and initiate work orders for maintenance.',
+    authority:'▸ Inspect traffic control devices: signals, signs, and pavement markings\n▸ Identify and document deficiencies in signal timing, sign placement, and markings\n▸ Issue work orders for Traffic Engineering maintenance crews\n▸ Inspect contractor-installed temporary traffic control during construction\n▸ Investigate citizen complaints about traffic control issues\n▸ Document sight distance obstructions caused by vegetation or structures\n▸ Inspect crosswalks, pedestrian signals, and ADA-compliant curb ramps',
+    enforce:'▸ Missing, damaged, faded, or improperly positioned traffic signs\n▸ Faded or missing pavement markings: centerlines, stop bars, crosswalks\n▸ Malfunctioning or improperly timed traffic signals\n▸ Vegetation obstructing sign visibility or traffic sight lines\n▸ Contractor temporary traffic control not meeting MUTCD standards\n▸ ADA non-compliant pedestrian facilities at intersections\n▸ Illegal traffic control devices installed by property owners',
+    exempt:'▸ Traffic control on state highways (I-44, I-55, I-64, I-70) - MoDOT jurisdiction\n▸ Traffic control on private property\n▸ Railroad grade crossing signals - railroad and FRA jurisdiction\n▸ Police Department temporary closures',
+    summary:[{heading:'SIGN INSPECTION',body:'▸ Check retroreflectivity: must meet MUTCD minimum at night\n▸ Check mounting height and lateral clearance per MUTCD\n▸ Verify correct sign type, size, and message for location\n▸ Check for vegetation obscuring sign - initiate trim order\n▸ Document: sign type, GPS location, deficiency, priority level'},{heading:'PAVEMENT MARKINGS',body:'▸ Stop bars: must be visible and in correct location\n▸ Crosswalk markings: minimum retroreflectivity, correct width\n▸ Lane lines and centerlines: continuous, correct color, visible\n▸ Priority: school zones, signalized intersections, crosswalks\n▸ Document: location, marking type, condition, priority'},{heading:'SIGNAL INSPECTION',body:'▸ All signal heads: correct indication, proper positioning\n▸ LED condition: burned-out sections are violations requiring repair\n▸ Pedestrian signals: APS required at warranted locations\n▸ Physical damage: knocked poles, damaged heads require immediate response\n▸ Coordinate with signal maintenance for electronic and timing issues'},{heading:'TEMPORARY TRAFFIC CONTROL',body:'▸ Contractor work zones: verify MUTCD Part 6 compliance\n▸ Required: advance warning, tapers, work space, buffer space\n▸ Flaggers: trained, visible, using approved paddles or flags\n▸ Night work: additional lighting, retroreflective channelizing devices\n▸ Stop-work authority if TTC creates immediate hazard to public'},{heading:'SIGHT DISTANCE',body:'▸ Vegetation at intersections must not obstruct corner sight distance\n▸ Issue notice to property owner for vegetation correction\n▸ Coordinate with Arborist for tree-related sight distance issues\n▸ Structures encroaching sight triangle: report to Planning'},{heading:'WORK ORDER PRIORITY',body:'▸ IMMEDIATE 24hr: missing stop sign, malfunctioning signal, unsafe TTC\n▸ STANDARD 1-2 weeks: faded markings, damaged sign still in place\n▸ ROUTINE scheduled: minor retroreflectivity, informational signs\n▸ Follow up on safety-critical items within 24 hours'},{heading:'⚡ FIELD DECISION FLOW',body:'1. PATROL assigned area or respond to complaint\n2. IDENTIFY deficiency: sign, marking, signal, or TTC\n3. PHOTOGRAPH: GPS-tagged, multiple angles\n4. CLASSIFY priority:\n   IMMEDIATE: missing stop sign, signal malfunction, unsafe TTC\n   STANDARD: faded markings, damaged sign still present\n   ROUTINE: minor retroreflectivity, informational signs\n5. ISSUE work order to maintenance crew\n6. VEGETATION obstructing sign → notice to property owner\n   Also initiate trim order for City ROW vegetation\n7. CONTRACTOR TTC non-compliant → direct immediate correction\n   Immediate hazard → stop work until corrected\n8. FOLLOW UP: safety-critical items within 24 hours\nMoDOT (state route deficiencies): (888) 275-6636\nKEY: Missing stop sign or signal malfunction = same-day response'}],
+    ord_header:'MUTCD / City of St. Louis Traffic Engineering Standards',
+    ord_body:'City of St. Louis - Traffic Engineering Inspection Reference\n\nAUTHORITY\nStreets Department Traffic Engineering Division maintains and enforces standards for traffic control devices on City-jurisdiction streets under the MUTCD as adopted by Missouri.\n\nMUTCD COMPLIANCE\nAll traffic control devices must conform to the MUTCD current edition. This includes signs, markings, signals, and temporary traffic control in work zones.\n\nSIGN RETROREFLECTIVITY\nAll traffic signs must meet MUTCD minimum retroreflectivity standards. Signs failing minimums must be replaced.\n\nADA REQUIREMENTS\nPedestrian facilities at signalized intersections must comply with ADA requirements including compliant curb ramps, detectable warning surfaces, and accessible pedestrian signals where warranted.\n\nMoDOT Jurisdiction (state routes): (888) 275-6636\n\nNote: Working field reference. Consult Traffic Engineering Division for current City standards.'
+  }
+  ,
+  {
+    id:'sewer_lateral_inspector',
+    label:'Sewer Lateral Inspector — MSD / Building Division Partnership',
+    whoami:'I am a Sewer Lateral Inspector operating under the joint authority of the Metropolitan St. Louis Sewer District (MSD) and the City of St. Louis Building Division. I inspect private sewer laterals for defects, illegal connections, and compliance with MSD Regulation XII and City plumbing requirements.',
+    authority:'▸ Inspect private sewer laterals for structural defects, root intrusion, and illegal connections\n▸ Conduct smoke testing to identify cross-connections and illicit storm drain connections\n▸ Issue notices of violation for non-compliant laterals\n▸ Review and approve lateral repair and replacement permits\n▸ Coordinate with City Plumbing Inspector on permit-related lateral work\n▸ Investigate sewage backup complaints attributable to private lateral defects\n▸ Coordinate with MSD on public main issues vs. private lateral issues',
+    enforce:'▸ Private laterals with confirmed structural defects: cracks, offsets, collapses\n▸ Root intrusion blocking or infiltrating the private lateral\n▸ Illegal storm drain connections to sanitary sewer lateral\n▸ Sump pump discharges connected to sanitary sewer (prohibited)\n▸ Downspout and roof drain connections to sanitary sewer (prohibited)\n▸ Laterals installed without proper slope, material, or cleanout access\n▸ Lateral work performed without required MSD and City permits',
+    exempt:'▸ Public sewer mains - MSD authority and responsibility\n▸ Storm sewer system - MSD and Streets Department\n▸ Water service lines - Water Division or Missouri American Water\n▸ Interior plumbing beyond the cleanout - City Plumbing Inspector jurisdiction',
+    summary:[{heading:'PRIVATE LATERAL BOUNDARY',body:'▸ Private lateral begins at the structure foundation or cleanout\n▸ Private lateral ends at the connection to the public main (the tap)\n▸ Owner is responsible for the entire private lateral\n▸ MSD maintains the public main and tap connection\n▸ Disputes about responsibility: document and consult MSD'},{heading:'LATERAL INSPECTION METHODS',body:'▸ CCTV camera: most definitive - identifies defects, root intrusion, slope\n▸ Smoke testing: reveals illegal cross-connections\n▸ Visual inspection at cleanout: check flow, color, odor\n▸ Document all findings with date-stamped video or photos and written report'},{heading:'ILLEGAL CONNECTIONS',body:'▸ Sump pump to sanitary sewer: prohibited - must discharge to storm or grade\n▸ Downspouts to sanitary sewer: prohibited - must discharge to storm or grade\n▸ Foundation drain tiles to sanitary: prohibited - must disconnect\n▸ These connections cause sanitary sewer overflows during rain events\n▸ Issue notice requiring disconnection within 30-60 days'},{heading:'LATERAL REPAIR',body:'▸ Requires both City plumbing permit AND MSD permit\n▸ New lateral: PVC Schedule 40 minimum, minimum 1/4 inch per foot slope\n▸ Cleanout required at or near property line\n▸ Inspect during installation (open trench) and after backfill with CCTV'},{heading:'SEWAGE BACKUP COMPLAINTS',body:'▸ First: determine if blockage is in private lateral or public main\n▸ Request MSD to inspect and rod public main - eliminates main as cause\n▸ Main clear: private lateral is owner responsibility\n▸ Document all findings - owner may dispute responsibility'},{heading:'PENALTIES',body:'▸ Illegal connection non-compliance: $100-$500 per day\n▸ Lateral work without permits: $500-$1,000 plus permit fees\n▸ Sewage discharge to surface: coordinate with Environmental Health\n▸ MSD may impose separate surcharges and penalties'},{heading:'⚡ FIELD DECISION FLOW',body:'1. RECEIVE complaint or identify property for inspection\n2. DETERMINE jurisdiction: public main (MSD) or private lateral (owner)?\n3. BACKUP COMPLAINT: request MSD rod and inspect main to rule out main cause\n4. INSPECT lateral: cleanout observation, CCTV if warranted\n5. ILLEGAL CONNECTION found → notice, 30-60 day compliance\n6. STRUCTURAL DEFECT found → notice, 60-90 day compliance for repair\n7. SEWAGE DISCHARGE to surface → immediate - notify Health Dept\n8. REPAIR PERMIT requested → verify MSD permit also obtained\n9. INSPECT during and after repair - CCTV post-repair confirmation\nMSD Emergency: (314) 768-6260\nKEY: Always coordinate with MSD - never approve lateral work without confirming MSD permit'}],
+    ord_header:'MSD Regulation XII / City Plumbing Code - Sewer Lateral Requirements',
+    ord_body:'City of St. Louis - Sewer Lateral Inspection Reference\n\nAUTHORITY\nMSD has jurisdiction over the public sewer system and private sewer laterals under MSD Regulation XII. Building Division has concurrent jurisdiction over lateral work requiring plumbing permits.\n\nPRIVATE LATERAL RESPONSIBILITY\nThe property owner is responsible for the private sewer lateral from the structure to the connection point at the public main.\n\nILLICIT CONNECTIONS\nSump pumps, downspouts, and foundation drains connected to the sanitary sewer are primary inflow sources and are prohibited under MSD requirements.\n\nPERMIT REQUIREMENTS\nAll lateral repair or replacement requires: (1) City plumbing permit and (2) MSD permit for work near the tap connection.\n\nMSD Customer Service and 24-hour Emergency: (314) 768-6260\n\nNote: Working field reference. Consult MSD Regulation XII and City Building Division for current requirements.'
+  }
+  ,
+  {
+    id:'alley_inspector',
+    label:'Alley Maintenance Inspector — Streets Department',
+    whoami:'I am an Alley Maintenance Inspector for the City of St. Louis Streets Department. I patrol and inspect public alleys, identify pavement defects, drainage problems, illegal dumping, and obstruction issues, initiate work orders for maintenance crews, and issue notices to property owners for alley-related violations.',
+    authority:'▸ Patrol and inspect public alleys for pavement defects and drainage problems\n▸ Document illegal dumping in or adjacent to public alleys\n▸ Issue notices to property owners for alley-related refuse violations\n▸ Initiate work orders for City alley maintenance crews\n▸ Investigate 311 and CSB alley complaints\n▸ Document obstructions and encroachments in public alley right-of-way\n▸ Coordinate with Refuse Enforcement, Vector Control, and Streets Division',
+    enforce:'▸ Illegal dumping: bulk items, construction debris, trash in alley ROW\n▸ Pavement failures: potholes, base failures, surface distress\n▸ Drainage obstructions: blocked inlets, standing water, improper grading\n▸ Encroachments: structures, fences, or dumpsters in alley ROW\n▸ Vegetation overhanging or blocking alley passage\n▸ Refuse containers not stored on private property between collections\n▸ Dumpsters blocking alley access or creating safety hazard',
+    exempt:'▸ Private alleys not in dedicated public ROW - advise property owner of private responsibility\n▸ Individual refuse violations best handled by Refuse Enforcement Inspector\n▸ Utility infrastructure in alley (poles, lines) - notify respective utility\n▸ Structural issues with buildings abutting alleys - refer to Building Division',
+    summary:[{heading:'ILLEGAL DUMPING',body:'▸ Document: GPS location, type of material, quantity, photos\n▸ Check for identifying information in dumped material\n▸ Identify responsible party: adjacent owner or unknown dumper\n▸ Owner contributed: issue notice of violation\n▸ Unknown dumper: City cleanup work order plus police report if significant\n▸ Large-scale commercial dumping: coordinate with police for investigation'},{heading:'PAVEMENT ASSESSMENT',body:'▸ Potholes: document size (diameter, depth), GPS, photos\n▸ Base failure: larger area of alligatoring or subsidence\n▸ IMMEDIATE: opening large enough to damage vehicles or cause falls\n▸ STANDARD: substantial defect, scheduled maintenance\n▸ Sinkhole or sudden subsidence: may indicate pipe failure below - notify utility'},{heading:'DRAINAGE ISSUES',body:'▸ Standing water after rain: identify source - blocked inlet or improper grading\n▸ Document inlet condition: blocked, damaged, or missing grate\n▸ Chronic flooding: may require engineering evaluation - escalate to supervisor\n▸ Do not attempt to clear blocked inlets without proper equipment'},{heading:'ENCROACHMENTS',body:'▸ Structures in alley ROW require encroachment permit if any are allowed\n▸ Fence encroachments: notice to property owner for removal\n▸ Dumpsters blocking passage: notify owner, issue notice\n▸ Vegetation: notice to owner to trim; City trim order for ROW vegetation\n▸ Document encroachment with photos and measurements'},{heading:'REFUSE IN ALLEY',body:'▸ Containers must be on private property except during collection window\n▸ Bulk items outside collection schedule: issue notice\n▸ Commercial dumpsters: designated location, lid closed, not blocking alley\n▸ Persistent violators: coordinate with Refuse Enforcement Inspector'},{heading:'WORK ORDER PRIORITY',body:'▸ IMMEDIATE: safety hazard (large pothole, collapse, full blockage)\n▸ URGENT 72hr: substantial pavement defect, drainage failure\n▸ STANDARD: routine maintenance items, minor defects\n▸ Follow up safety-critical items within 24 hours'},{heading:'⚡ FIELD DECISION FLOW',body:'1. PATROL alley block-by-block or respond to complaint\n2. DOCUMENT each deficiency: GPS, photos, written description\n3. ILLEGAL DUMP:\n   Owner identified → notice of violation\n   Unknown → City cleanup work order plus police report if significant\n4. PAVEMENT DEFECT → classify priority, submit work order\n5. DRAINAGE ISSUE → document, work order, escalate if chronic\n6. ENCROACHMENT → notice to property owner, 30-day compliance\n7. REFUSE VIOLATION → notice to property owner\n8. UTILITY ISSUE (sinkhole, sinking) → notify utility plus emergency work order\n9. FOLLOW UP: safety items within 24 hours, document closure\nKEY: Any condition completely blocking alley access = immediate response'}],
+    ord_header:'City Code Chapter 17 - Streets, Sidewalks, and Public Ways',
+    ord_body:'City of St. Louis - Alley Maintenance Inspection Reference\n\nAUTHORITY\nStreets Department maintains public alley rights-of-way and enforces City Code Chapter 17 prohibitions on illegal dumping, obstruction, and improper refuse storage in public alleys.\n\nALLEY RIGHT-OF-WAY\nPublic alleys are dedicated public rights-of-way. Property owners abutting alleys are responsible for keeping the portion adjacent to their property clear of refuse they have placed. The full alley ROW width must remain passable.\n\nILLEGAL DUMPING\nDepositing refuse, bulk items, or construction debris in a public alley is prohibited and subject to fines.\n\nCOORDINATION\nCoordinate with: Refuse Enforcement for persistent refuse violations, Vector Control when material creates harborage, Building Division for structural issues, Utilities for infrastructure failures in alley ROW.\n\nNote: Working field reference. Consult Streets Department for work order procedures and maintenance priorities.'
+  }
+  ,
+  {
+    id:'community_dev',
+    label:'Community Development Specialist — SLDC / Neighborhood Stabilization',
+    whoami:'I am a Community Development Specialist for the St. Louis Development Corporation (SLDC) and City Neighborhood Stabilization Office. I identify vacant properties, assess neighborhood conditions, facilitate LRA referrals, connect owners and developers with rehabilitation incentives, and coordinate multi-department responses to distressed areas.',
+    authority:'▸ Identify and document vacant, abandoned, and underutilized properties\n▸ Assess neighborhood conditions and track distress indicators block by block\n▸ Facilitate referrals to the Land Reutilization Authority (LRA)\n▸ Connect property owners with City rehabilitation loan and grant programs\n▸ Coordinate with Building Division, Housing Conservation, and LRA\n▸ Conduct outreach to property owners, developers, and neighborhood organizations\n▸ Document conditions to support city planning and investment decisions',
+    enforce:'▸ Vacant structures: condition, secure status, and ownership documentation\n▸ Tax-delinquent properties approaching LRA referral eligibility\n▸ Neighborhood blight indicators: abandonment clusters and vacancy rates\n▸ Properties with rehabilitation potential where owners may not know of incentives\n▸ Absentee owners of distressed properties who can be connected to resources\n▸ Illegal occupancy of vacant structures - coordinate with Police and Building Division',
+    exempt:'▸ Code enforcement decisions - refer violations to Building, Housing, or Refuse inspectors\n▸ Criminal activity - refer to Police\n▸ LRA property disposition decisions - LRA Board authority\n▸ Tax assessment decisions - Assessor Office\n▸ Demolition orders - Building Division and Preservation Board authority',
+    summary:[{heading:'VACANCY DOCUMENTATION',body:'▸ Record address, parcel ID, owner of record (Assessor lookup)\n▸ Assess condition: sound, deteriorating, dangerous, or collapsed\n▸ Document: secure status, utility connections, evidence of occupation\n▸ Photograph: exterior all elevations, any visible interior conditions\n▸ Check tax delinquency status (Collector of Revenue records)'},{heading:'LRA REFERRAL PATHWAY',body:'▸ Properties become eligible for LRA acquisition after unpaid property taxes\n▸ LRA acquires via tax sale and holds or sells for redevelopment\n▸ Identify tax-delinquent properties approaching LRA eligibility\n▸ Coordinate with LRA to prioritize acquisition of strategic properties\n▸ LRA inventory available for development - connect developers to LRA'},{heading:'REHABILITATION INCENTIVES',body:'▸ Chapter 353 tax abatement: 10-25 year property tax abatement for qualifying projects\n▸ Neighborhood Preservation Act credits for rehab in designated areas\n▸ SLDC forgivable loan programs for owner-occupant rehabilitation\n▸ Federal Historic Tax Credits for eligible historic structures\n▸ HOME and CDBG funding through City housing programs'},{heading:'MULTI-DEPT COORDINATION',body:'▸ Dangerous condition → refer to Dangerous Building Inspector\n▸ Occupied housing violations → refer to Housing Conservation\n▸ Illegal occupancy → coordinate with Police and Building Division\n▸ Vegetation violations → refer to Nuisance Inspector (Weed Control)\n▸ Document all referrals and track outcomes'},{heading:'RESIDENT OUTREACH',body:'▸ Contact property owners: inform of City resources and incentive programs\n▸ Some absentee owners are unaware of property condition or tax status\n▸ Connect neighborhood groups with SLDC planning resources\n▸ Attend neighborhood meetings as SLDC representative\n▸ Document all owner contacts: date, method, response, outcome'},{heading:'DATA AND REPORTING',body:'▸ Update vacancy database after each inspection\n▸ Track properties entering and exiting vacancy\n▸ Identify clusters and trends for planning reports\n▸ Report data feeds into City plans, grant applications, ward briefings'},{heading:'⚡ FIELD DECISION FLOW',body:'1. PATROL assigned area or respond to distressed property\n2. DOCUMENT vacancy: photos, condition assessment, ownership research\n3. TAX STATUS: delinquent? → flag for LRA referral tracking\n4. CONDITION:\n   Dangerous → immediately refer to Dangerous Building Inspector\n   Vegetation → refer to Nuisance Inspector\n   Occupied housing → refer to Housing Conservation\n5. OWNER OUTREACH: attempt contact by mail or in person\n   Owner reachable and interested → connect to rehab programs\n   Owner non-responsive → document, escalate via referral pathway\n6. ILLEGAL OCCUPANCY found → notify Police immediately\n7. UPDATE vacancy database and referral tracking\n8. FOLLOW UP on all referrals within 30 days\nSLDC: (314) 657-3700   www.stldc.com\nKEY: You are a connector and coordinator - enforcement goes through the right department'}],
+    ord_header:'SLDC / LRA Programs - Neighborhood Stabilization Reference',
+    ord_body:'City of St. Louis - Community Development Field Reference\n\nAUTHORITY\nCommunity Development Specialists operate under SLDC and the City Neighborhood Stabilization Office. SLDC administers multiple programs supporting property rehabilitation and neighborhood revitalization.\n\nLAND REUTILIZATION AUTHORITY (LRA)\nAuthorized under Missouri Chapter 92 RSMo to acquire tax-delinquent properties and sell them for development. LRA holds thousands of vacant parcels in St. Louis.\n\nKEY PROGRAMS\nChapter 353 Tax Abatement: 10-25 year property tax abatement for qualifying development.\nNPA: Missouri state historic rehabilitation tax credits.\nHOME and CDBG: Federal funds administered by City for housing rehabilitation.\n\nSLDC: (314) 657-3700   www.stldc.com\n\nNote: Working field reference. Consult SLDC for current program details and application procedures.'
+  }
+  ,
+  {
+    id:'vacant_property_inspector',
+    label:'Vacant Property Inspector — Building Division / LRA',
+    whoami:'I am a Vacant Property Inspector for the City of St. Louis Building Division, working in coordination with the Land Reutilization Authority (LRA). I systematically inspect vacant and abandoned structures throughout the City to support enforcement, LRA acquisition, and redevelopment decisions.',
+    authority:'▸ Systematically inspect vacant structures for condition, security, and safety\n▸ Document and photograph conditions for Building Division and LRA records\n▸ Issue notices for unsecured or open vacant structures\n▸ Refer dangerous structures to the Dangerous Building Inspector\n▸ Maintain the City vacant property inventory database\n▸ Verify compliance with boarding and securing requirements\n▸ Coordinate with LRA on acquisition-eligible properties\n▸ Check for illegal occupancy and coordinate with Police',
+    enforce:'▸ Vacant structures open to trespass: unsecured doors, windows, or openings\n▸ Structures with inadequate boarding or securing\n▸ Vacant buildings with deteriorating conditions since last inspection\n▸ Structures with evidence of illegal occupancy, arson, or vandalism\n▸ Properties not registered as required under vacant property ordinance\n▸ LRA-owned properties requiring condition verification\n▸ Structures approaching dangerous building threshold',
+    exempt:'▸ Interior conditions of structurally dangerous buildings - refer to Dangerous Building Inspector\n▸ Occupied housing - refer to Housing Conservation Inspector\n▸ Active construction sites on formerly vacant properties\n▸ Properties with current rehabilitation permits under active construction',
+    summary:[{heading:'SECURING STANDARDS',body:'▸ Windows and doors must be secured against unauthorized entry\n▸ Approved methods: plywood minimum 3/4 inch, or steel panel boarding\n▸ Plywood must be secured with screws or through-bolts, not nails alone\n▸ All utility service must be disconnected at meter by utility company\n▸ Document: each opening, boarding method, condition, compliance status'},{heading:'CONDITION ASSESSMENT',body:'▸ Rate condition: sound, fair, deteriorated, dilapidated, or collapsed\n▸ Document specific deficiencies: roof, walls, foundation condition\n▸ Note any changes since prior inspection\n▸ Evidence of fire, vandalism, or illegal activity: photograph and document\n▸ Photograph all four elevations plus specific deficiencies'},{heading:'ILLEGAL OCCUPANCY',body:'▸ Signs: recent trash, food containers, bedding, lit candles, or heat sources\n▸ Active utilities despite disconnection order: investigate\n▸ If occupied: do NOT enter alone - contact Police for assistance\n▸ After police clearance: inspect and document, issue securing notice'},{heading:'DATABASE MAINTENANCE',body:'▸ Update condition record after every inspection\n▸ Record: date, inspector, condition rating, specific deficiencies, photos\n▸ Track owner of record and any ownership changes\n▸ Flag properties approaching LRA acquisition eligibility\n▸ Record all notices issued and compliance dates'},{heading:'REFERRAL PATHWAYS',body:'▸ Dangerous conditions → Dangerous Building Inspector (immediate)\n▸ Vegetation violations → Nuisance Inspector (Weed Control)\n▸ Rodent harborage → Vector Control\n▸ LRA acquisition candidate → Community Development Specialist\n▸ Criminal activity → Police'},{heading:'VACANT PROPERTY REGISTRATION',body:'▸ St. Louis requires vacant properties to be registered with the City\n▸ Check registration status - unregistered vacant property is a violation\n▸ Issue notice for registration non-compliance\n▸ Registration data provides owner contact for enforcement notices'},{heading:'⚡ FIELD DECISION FLOW',body:'1. ARRIVE: assess exterior from public ROW first\n2. PHOTOGRAPH: all four elevations, date and time stamped\n3. ASSESS SECURING: any unsecured openings?\n   YES → issue notice: secure within 24-72 hours\n4. ASSESS CONDITION: deteriorating since last inspection?\n   Significantly worse → flag for Dangerous Building review\n5. EVIDENCE OF OCCUPANCY?\n   YES → do not enter alone, call Police for assistance\n6. UPDATE condition database immediately after inspection\n7. IDENTIFY violations: vegetation, rodent harborage, registration\n   Issue notices or referrals as appropriate\n8. APPROACHING DANGEROUS THRESHOLD → refer to Dangerous Building Inspector\n9. LRA ACQUISITION CANDIDATE → notify Community Development Specialist\n10. SCHEDULE FOLLOW-UP based on condition trend'}],
+    ord_header:'City of St. Louis Vacant Property Regulations / LRA Program',
+    ord_body:'City of St. Louis - Vacant Property Inspection Reference\n\nAUTHORITY\nBuilding Division has authority to require owners of vacant structures to maintain, secure, and register those structures. LRA acquires tax-delinquent vacant properties for disposition.\n\nVACANT PROPERTY REGISTRATION\nSt. Louis requires owners of vacant properties to register with Building Division and maintain the property in a secured and safe condition.\n\nSECURING REQUIREMENTS\nVacant structures must be secured against unauthorized entry using Building Division approved materials and methods. Steel panel systems preferred for long-term vacancies.\n\nUTILITY DISCONNECTION\nAll utilities must be disconnected by the respective utility company, not merely turned off at the meter. Required to prevent hazards to trespassers and firefighters.\n\nLRA ACQUISITION\nProperties with two or more years of unpaid taxes become eligible for LRA acquisition through the tax sale process.\n\nNote: Working field reference. Consult Building Division for current registration requirements and securing standards.'
+  }
+  ,
+  {
+    id:'fire_investigator',
+    label:'Fire Investigator — Fire Department, Bureau of Fire Investigation',
+    whoami:'I am a Fire Investigator for the City of St. Louis Fire Department, Bureau of Fire Investigation. I conduct systematic origin and cause investigations at fire scenes, document findings for civil and criminal proceedings, coordinate with law enforcement on arson investigations, and testify as an expert witness when required.',
+    authority:'▸ Conduct origin and cause investigations at all significant fire scenes\n▸ Determine fire origin through systematic fire pattern analysis\n▸ Determine fire cause: accidental, natural, undetermined, or incendiary (arson)\n▸ Document fire scene with systematic photography and diagrams\n▸ Collect and preserve physical evidence for laboratory analysis\n▸ Coordinate with SLMPD Arson Unit on suspected incendiary fires\n▸ Interview witnesses, occupants, first-arriving firefighters, and neighbors\n▸ Prepare written reports and testify in court proceedings',
+    enforce:'▸ All fires resulting in injury, death, or significant property loss\n▸ All fires in commercial, industrial, or multi-family occupancies\n▸ Fires with unusual burn patterns or suspected arson indicators\n▸ Fires in structures with recent code violations or complaints on record\n▸ Vehicle fires where incendiary cause is suspected\n▸ Explosion investigations associated with fire events\n▸ Juvenile fire-setting incidents',
+    exempt:'▸ Minor residential fires with clear accidental cause identified by first responders\n▸ Insurance claim details - investigation is factual, not liability determination\n▸ Criminal prosecution decisions - Circuit Attorney authority\n▸ Human remains - Medical Examiner has jurisdiction',
+    summary:[{heading:'SCENE DOCUMENTATION',body:'▸ Systematic exterior photography before interior entry\n▸ Document fire damage patterns: char depth, burn direction, low burn areas\n▸ Photograph from area of origin outward - not the other way\n▸ Look for pour patterns: irregularly shaped burn areas on floors\n▸ Diagram structure with room names, door and window positions, evidence locations'},{heading:'ORIGIN DETERMINATION',body:'▸ Origin = where fire started - usually lowest and most charred area\n▸ Char depth analysis: deeper char = longer burn time = closer to origin\n▸ V-patterns: point of V aims toward origin area\n▸ Multiple unconnected V-patterns from one source = one origin\n▸ Multiple independent origins = arson indicator'},{heading:'CAUSE DETERMINATION',body:'▸ Accidental: unintentional ignition from identified source\n▸ Natural: lightning or sun through lens effect\n▸ Undetermined: cannot be classified with available evidence\n▸ Incendiary (arson): evidence of intentional ignition\n▸ Do NOT rule out accidental before exhausting all possible accidental causes'},{heading:'ARSON INDICATORS',body:'▸ Multiple unconnected fire origins\n▸ Accelerant odors remote from normal storage areas\n▸ Pour patterns: irregular low-burn areas inconsistent with fuel load\n▸ Trailers: fire paths connecting multiple origin points\n▸ Missing or disabled smoke detectors in occupied structures\n▸ NOTE: one indicator alone is not proof - totality of evidence required'},{heading:'EVIDENCE COLLECTION',body:'▸ Use clean uncontaminated metal cans or approved containers\n▸ Collect substrate material with suspected accelerant\n▸ Label: location, date and time, collector, case number\n▸ Chain of custody: document every transfer\n▸ Submit to ATF or state laboratory for accelerant identification\n▸ Photograph exact collection location before removing evidence'},{heading:'LAW ENFORCEMENT COORDINATION',body:'▸ Suspected arson: contact SLMPD Arson Unit immediately\n▸ Arson scene is a crime scene: protect and preserve\n▸ Share findings with law enforcement, protect chain of custody\n▸ Death investigation: Medical Examiner has jurisdiction over remains\n▸ Federal involvement: ATF has jurisdiction on bombings and certain arson'},{heading:'⚡ FIELD DECISION FLOW',body:'1. RECEIVE dispatch: respond to scene\n2. COORDINATE with Incident Commander before entry\n3. EXTERIOR documentation: photograph before entry, note damage patterns\n4. SYSTEMATIC INTERIOR exam: work from least to most damaged\n5. IDENTIFY origin area: follow char patterns and V-patterns\n6. AT ORIGIN: identify or rule out all accidental ignition sources\n7. COLLECT evidence: photograph first, then collect in clean containers\n8. INTERVIEW: first responders, occupants, neighbors\n9. DETERMINE cause: accidental, natural, undetermined, or incendiary\n10. INCENDIARY confirmed → contact SLMPD Arson Unit, protect scene\n11. WRITE report: complete within 24-48 hours\n12. TESTIFY: be prepared to qualify as expert witness in all cases\nNFPA 921 is the required investigation methodology\nKEY: Never form conclusion before completing systematic examination'}],
+    ord_header:'NFPA 921 / Missouri Fire Investigation Standards',
+    ord_body:'City of St. Louis - Fire Investigation Reference\n\nAUTHORITY\nFire Department Bureau of Fire Investigation has authority to investigate fires within the City. Arson is a felony under Missouri law (Sec. 569.050-569.065 RSMo).\n\nINVESTIGATION STANDARD\nAll investigations must be conducted in accordance with NFPA 921: Guide for Fire and Explosion Investigations - the nationally recognized standard evaluated in court proceedings.\n\nORIGIN AND CAUSE\nEvery investigation must systematically determine: (1) area of origin, (2) point of origin, (3) ignition source, (4) first material ignited, (5) cause.\n\nARSON STATUTES\nArson 1st: knowingly damaging a building when someone is inside - Class A felony\nArson 2nd: knowingly damaging a building - Class B or C felony\n\nLABORATORY ANALYSIS: ATF Fire Research Laboratory or Missouri State Highway Patrol Crime Lab.\n\nNote: Working field reference. Consult Bureau of Fire Investigation and NFPA 921 for current standards.'
+  }
+  ,
+  {
+    id:'license_inspector',
+    label:'License Inspector — License Collector\'s Office',
+    whoami:'I am a License Inspector for the City of St. Louis License Collector\'s Office. I conduct field inspections to verify that businesses operating within the City hold current and appropriate City business licenses and contractor licenses, and I identify and cite unlicensed operations.',
+    authority:'▸ Conduct field inspections of businesses for business license compliance\n▸ Verify current City business licenses are displayed and active\n▸ Verify contractor licenses for permitted work\n▸ Issue notices of violation for unlicensed business operations\n▸ Coordinate with Building Division on unlicensed contractor work at permit sites\n▸ Coordinate with Health Department on unlicensed food establishments',
+    enforce:'▸ Businesses operating without a current City of St. Louis business license\n▸ Contractors performing permitted work without current City contractor license\n▸ Home-based businesses without required licenses or permits\n▸ Businesses operating beyond the scope of their license classification\n▸ Seasonal or transient vendors without required vendor licenses\n▸ Businesses with lapsed or suspended licenses continuing to operate',
+    exempt:'▸ Non-commercial activities and non-profit activities exempt under City code\n▸ State or federally regulated professions where City license is not required\n▸ Agricultural operations outside City scope',
+    summary:[{heading:'LICENSE VERIFICATION',body:'▸ Request business license: owner or manager must produce on request\n▸ Verify: name, address, license type, and expiration date\n▸ Compare license scope to actual operations\n▸ Check City License Collector database for active status\n▸ Photograph license on display and record license number'},{heading:'CONTRACTOR LICENSE CHECK',body:'▸ Permitted construction sites: verify contractor City license\n▸ Coordinate with Building Inspector for joint verification\n▸ License must be: current and correct type for trade being performed\n▸ Each subcontractor must hold appropriate City license for their trade\n▸ Document: contractor name, license number, project address, work performed'},{heading:'UNLICENSED OPERATION',body:'▸ Issue Notice of Violation: obtain license within 10 days\n▸ Continue to operate = each day is a separate violation\n▸ Failure to respond: escalate to citation and civil court\n▸ Repeat or flagrant: coordinate with City Attorney for injunction\n▸ Unlicensed contractor doing structural work: Building Division stop-work order'},{heading:'FOOD ESTABLISHMENTS',body:'▸ Food establishments require both City business license AND Health Dept food license\n▸ Confirm Health Department food license is current\n▸ Operating without food license: coordinate with Environmental Health Inspector'},{heading:'HOME-BASED BUSINESSES',body:'▸ Home occupations may require City business license\n▸ Also subject to zoning regulations on home occupation\n▸ Coordinate with Zoning Inspector on land use compliance\n▸ Signs, customers, or employees on-site may trigger additional requirements'},{heading:'PENALTIES',body:'▸ Operating without license: $100-$1,000 per occurrence, each day separate\n▸ Unlicensed contractor: significant penalties plus Building Division stop-work\n▸ Operating with suspended license: enhanced penalties\n▸ Criminal referral possible for flagrant or repeat offenders'},{heading:'⚡ FIELD DECISION FLOW',body:'1. IDENTIFY business operation on complaint, patrol, or Building referral\n2. REQUEST to see business license\n3. LICENSE VALID AND APPROPRIATE → document, close\n4. LICENSE EXPIRED → notice: renew within 10 days\n5. NO LICENSE → Notice of Violation: obtain license within 10 days\n   Document: business name, owner, type of operation, photos\n6. SCOPE MISMATCH → notice plus referral to appropriate department\n7. UNLICENSED CONTRACTOR at permit site → notify Building Inspector\n   Building may issue stop-work; you issue license violation notice\n8. FOOD ESTABLISHMENT → verify Health Dept food license also current\n9. NON-COMPLIANT on re-check → civil citation plus escalate to City Attorney\nLicense Collector: (314) 622-4528   1200 Market St. Rm 118'}],
+    ord_header:'City of St. Louis Business License Ordinances',
+    ord_body:'City of St. Louis - License Inspection Reference\n\nAUTHORITY\nLicense Collector\'s Office issues and enforces business licenses, contractor licenses, and occupational licenses under City ordinances.\n\nBUSINESS LICENSE REQUIREMENTS\nRequired to: operate a retail or commercial business, perform contractor work (separate contractor license also required), operate a home-based business in many cases, conduct transient or seasonal vending.\n\nCONTRACTOR LICENSING\nSeparate licenses required for: general contracting, electrical, plumbing, HVAC/mechanical, and certain specialty trades. All must hold current City credentials in addition to any state licenses.\n\nFOOD ESTABLISHMENT COORDINATION\nFood establishments require both a City business license (License Collector) and a food establishment license (Department of Health).\n\nLicense Collector: (314) 622-4528   1200 Market St., Room 118\n\nNote: Working field reference. Consult License Collector for current license types, fees, and exemptions.'
+  }
+  ,
+  {
+    id:'weights_measures',
+    label:'Weights & Measures Inspector — License Collector / Missouri Dept of Agriculture',
+    whoami:'I am a Weights and Measures Inspector for the City of St. Louis License Collector\'s Office in partnership with the Missouri Department of Agriculture. I inspect commercial weighing and measuring devices within the City for accuracy and compliance with Missouri law and NIST Handbook 44.',
+    authority:'▸ Inspect commercial scales, fuel pumps, and measuring devices for accuracy\n▸ Test devices using NIST-traceable certified reference standards\n▸ Issue certificates of approval for compliant devices\n▸ Issue condemn and stop-use orders for devices failing accuracy tests\n▸ Affix condemn seals to failing devices preventing further commercial use\n▸ Investigate short-weight and short-measure consumer complaints\n▸ Inspect net weight labeling on packaged goods at retail\n▸ Submit inspection records to Missouri Department of Agriculture',
+    enforce:'▸ Commercial scales at retail, grocery, deli, and farmers markets\n▸ Fuel dispensers (gas pumps) at all retail fuel stations\n▸ Vehicle scales at commercial weigh stations, recyclers, and landfills\n▸ Coin-operated laundry equipment on commercial premises\n▸ Net weight labeling on packaged commodities sold by weight\n▸ Measuring devices used in any commercial transaction',
+    exempt:'▸ Devices used exclusively for non-commercial purposes\n▸ Medical weighing devices - FDA jurisdiction\n▸ Devices on federal property\n▸ Items sold by count rather than weight or measure',
+    summary:[{heading:'SCALE TESTING',body:'▸ Use NIST-traceable certified test weights\n▸ Test at 20 percent, 50 percent, and maximum capacity of scale\n▸ Check zero: must read zero with no load\n▸ Tolerance varies by scale class - refer to NIST Handbook 44\n▸ Check tare function, price computing accuracy, display legibility\n▸ Check environmental factors: vibration, leveling, draft'},{heading:'FUEL PUMP TESTING',body:'▸ Use certified 5-gallon measure test can\n▸ Test each meter and hose combination individually\n▸ Minimum 3 test runs per meter\n▸ Tolerance: plus or minus 6 cubic inches per 5 gallons (Handbook 44)\n▸ Check meter resets to zero, vapor recovery, price display accuracy\n▸ Check octane posting: must match actual fuel grade dispensed'},{heading:'CONDEMNATION',body:'▸ Device failing accuracy test: affix condemn seal immediately\n▸ Issue written condemnation notice to owner or manager\n▸ Device may NOT be used commercially until repaired and re-tested\n▸ Using a condemned device is a serious violation - issue citation\n▸ Document: device ID, failure type, date, seal number'},{heading:'SHORT-WEIGHT COMPLAINTS',body:'▸ Obtain product, re-weigh on certified scale\n▸ Confirmed short-weight: issue notice to retailer\n▸ Check multiple samples from same supplier\n▸ Pattern of short-weight: escalate and coordinate with Missouri Dept of Agriculture\n▸ Document: product, label weight, actual weight, lot number, store'},{heading:'NET WEIGHT LABELING',body:'▸ Random spot-check packaged commodities at retail\n▸ Weigh package, subtract tare, compare to labeled net weight\n▸ Allowable shortage per Missouri regulations varies by quantity\n▸ Systematic shortage pattern: refer to state for manufacturer investigation'},{heading:'RECORD-KEEPING',body:'▸ Maintain inspection record for every device tested\n▸ Record: device type, manufacturer, ID number, test results, disposition\n▸ Annual inspection frequency required for most commercial devices\n▸ Submit records to Missouri Department of Agriculture for certification tracking\n▸ Current certification stickers must be affixed on approved devices'},{heading:'⚡ FIELD DECISION FLOW',body:'1. ARRIVE at business: identify all commercial weighing and measuring devices\n2. TEST each device with certified reference standards\n3. WITHIN TOLERANCE → issue certificate, affix approval seal, record\n4. FAILS TEST → affix condemn seal, issue notice, cease commercial use\n   Document: failure amount, direction (over or under), device ID\n5. CONDEMNED DEVICE: schedule re-inspection after repair\n6. USING CONDEMNED DEVICE → issue citation - serious violation\n7. NET WEIGHT check: weigh packaged goods, compare to label\n8. SHORT-WEIGHT pattern found → notify state program, issue notice\n9. FUEL PUMP: test each hose, check octane posting\n10. UPDATE inspection database, submit to Missouri program\nMissouri Dept of Agriculture Weights and Measures: (573) 751-4316\nKEY: Condemned devices cannot be used until re-tested and approved'}],
+    ord_header:'NIST Handbook 44 / Missouri Weights and Measures Law (Section 413 RSMo)',
+    ord_body:'City of St. Louis - Weights and Measures Inspection Reference\n\nAUTHORITY\nOperates under Missouri Revised Statutes Chapter 413 (Weights and Measures) and City ordinances. Missouri Department of Agriculture provides training, certification, and oversight.\n\nSTANDARD REFERENCE\nNIST Handbook 44 is the primary technical standard for device testing and tolerances. Use current edition.\n\nCERTIFICATION\nAll inspectors must maintain current certification through Missouri Department of Agriculture. Reference standards must be NIST-traceable and calibrated on schedule.\n\nANNUAL INSPECTION\nCommercial weighing and measuring devices must be inspected at least annually. New devices must be inspected before first commercial use.\n\nMissouri Dept of Agriculture Weights and Measures: (573) 751-4316\n\nNote: Working field reference. Consult Missouri Department of Agriculture and NIST Handbook 44 for current tolerances and procedures.'
+  }
+  ,
+  {
+    id:'zoning_inspector',
+    label:'Zoning Inspector — Planning & Urban Design Agency',
+    whoami:'I am a Zoning Inspector for the City of St. Louis Planning and Urban Design Agency. I enforce the City of St. Louis Zoning Code (Title 26), investigating land use violations, non-conforming use issues, sign violations, home occupation violations, and illegal conversions.',
+    authority:'▸ Inspect properties for compliance with the City of St. Louis Zoning Code (Title 26)\n▸ Investigate land use complaints: illegal uses, non-conforming use expansion\n▸ Inspect signage for permit status, size, height, and placement compliance\n▸ Identify illegal structure additions, conversions, or changes of occupancy\n▸ Issue Notices of Violation for zoning code violations\n▸ Coordinate with Building Division on change of occupancy\n▸ Testify at Board of Adjustment and City Plan Commission hearings',
+    enforce:'▸ Businesses operating in residential zones without proper approval\n▸ Unpermitted signs: size, height, placement, or lighting violations\n▸ Home occupation violations: businesses beyond permitted scope\n▸ Non-conforming use expansion beyond lawfully established footprint\n▸ Illegal structure additions or conversions changing occupancy without zoning approval\n▸ Outdoor storage of commercial materials in residential zones\n▸ Illegal parking of commercial trucks or construction equipment in residential zones\n▸ Setback violations: structures built within required setback areas without variance',
+    exempt:'▸ Variances, special use permits, and conditional use permits lawfully granted by Board of Adjustment\n▸ Non-conforming uses lawfully established and not being expanded\n▸ Building code compliance - Building Division jurisdiction\n▸ Uses on federal property',
+    summary:[{heading:'LAND USE VERIFICATION',body:'▸ Determine zoning district using City GIS or online zoning map\n▸ Identify permitted uses in that district\n▸ Identify the actual use occurring at the property\n▸ Check variance and SUP records before issuing any notice\n▸ Document: photos of use, signage, parking, equipment, customers'},{heading:'SIGN VIOLATIONS',body:'▸ Measure sign area: all faces and all elements of sign structure\n▸ Check sign height from grade\n▸ Verify sign permit on file with Building Division\n▸ Electronic and digital signs have additional restrictions\n▸ Temporary signs: limits on duration and size\n▸ Issue notice: remove or obtain permit within 10-30 days'},{heading:'HOME OCCUPATION',body:'▸ Home occupations are limited to incidental business use of residence\n▸ Violations: employees on-site, customer traffic, commercial signage, outside storage\n▸ One non-resident employee generally triggers violation\n▸ Coordinate with License Inspector on business license compliance\n▸ Issue notice: cease non-compliant aspects of home occupation'},{heading:'NON-CONFORMING USES',body:'▸ Legal non-conforming: use existed legally before zoning code changed\n▸ May continue but cannot be expanded or intensified\n▸ Research: when use was established, what zoning was in effect then\n▸ Document any expansion: larger area, more hours, more equipment\n▸ Abandonment: 6+ months without use eliminates non-conforming protection'},{heading:'ILLEGAL CONVERSION',body:'▸ Single-family to multi-family without approval: common violation\n▸ Residential to commercial without rezoning or special use permit\n▸ Accessory structure converted to dwelling unit without approval\n▸ Document: evidence of additional occupancy - mailboxes, meters, entries\n▸ Coordinate with Building Division: conversion likely also requires building permit'},{heading:'BOARD OF ADJUSTMENT',body:'▸ Property owners may appeal your NOV to the Board of Adjustment\n▸ They may also request a variance to legalize the condition\n▸ Your documentation is the evidence record for Board hearings\n▸ Prepare thorough written report: facts, code sections, photos\n▸ Be prepared to testify and explain code requirements clearly'},{heading:'⚡ FIELD DECISION FLOW',body:'1. RECEIVE complaint or identify violation on patrol\n2. RESEARCH: what is the zoning district and what uses are permitted?\n3. CHECK variance and SUP records: is there an exception on file?\n4. INSPECT: document actual use, signage, structures, storage, parking\n5. VIOLATION CONFIRMED → issue Notice of Violation\n   Specify: code section, violation description, required correction\n   Set compliance period: 10-30 days based on violation type\n6. HOME OCCUPATION → notice plus referral to License Inspector\n7. SIGN violation → notice: remove or permit within 10-30 days\n8. ILLEGAL CONVERSION → notice plus referral to Building Division\n9. RE-INSPECT: compliant? Close. Non-compliant? Escalate.\n10. BOARD OF ADJUSTMENT appeal: prepare and submit complete record\nPlanning and Urban Design Agency: (314) 622-3400   1200 Market St. Rm 200\nKEY: Research BEFORE issuing notice - variances and SUPs can authorize what looks like a violation'}],
+    ord_header:'City of St. Louis Zoning Code (Title 26) - Zoning Enforcement',
+    ord_body:'City of St. Louis - Zoning Inspection Reference\n\nAUTHORITY\nZoning Inspectors enforce the City of St. Louis Zoning Code (Title 26) under the authority of the Planning and Urban Design Agency. The Board of Adjustment hears variances, special use permits, and appeals.\n\nZONING CODE STRUCTURE\nSt. Louis zoning code regulates: permitted land uses, building placement (setbacks, heights, coverage), parking requirements, sign regulations, and accessory structure limitations.\n\nDETERMINING ZONING DISTRICT\nUse the City Parcel Viewer or GIS mapping to determine the zoning district for any property.\n\nNON-CONFORMING USES\nA legal non-conforming use may continue but cannot be expanded, intensified, or changed. Abandonment for six or more months eliminates non-conforming status.\n\nBOARD OF ADJUSTMENT\nHears appeals of zoning decisions, variances from dimensional requirements, and special use permits. Property owners have the right to appeal a Notice of Violation.\n\nPlanning and Urban Design Agency: (314) 622-3400   1200 Market St., Room 200\n\nNote: Working field reference. Consult Zoning Code (Title 26) and Planning Agency for current regulations.'
+  }
 ];
   return _cityJobsCache;
 }
@@ -4381,11 +4786,39 @@ function applyJobRole(jobId) {
   setCredsVal('ord_body', job.ord_body);
   localStorage.setItem('selected-job-role', jobId);
   showToast('Role loaded: ' + job.label.split(' — ')[0] + ' ✓');
-  // If fullscreen authority panel is open, refresh it
-  const fsWrap = document.getElementById('fs-auth-wrap');
-  if (fsWrap) showFullscreen('authority');
-}
-const CREDS_DEFAULTS = {
+  // If the fullscreen authority panel is open, refresh panel content without
+  // rebuilding the entire overlay (which would destroy the <select> and lock it).
+  const fsAuthWrap = document.getElementById('fs-auth-wrap');
+  if (fsAuthWrap) {
+    // Re-render roles panels content into their stable wrapper div
+    const rolesPanelsWrap = document.getElementById('fs-roles-panels-wrap');
+    if (rolesPanelsWrap) {
+      rolesPanelsWrap.innerHTML =
+        buildRolesPanel('roles_whoami','rgba(255,255,255,0.07)','white') +
+        buildRolesPanel('roles_authority','rgba(255,255,255,0.07)','white') +
+        buildRolesPanel('roles_enforce','rgba(255,255,255,0.07)','white') +
+        buildRolesPanel('roles_exempt','rgba(255,248,230,0.07)','#ffaa44');
+    }
+    // Re-render summary panels content into their stable wrapper div
+    const sumPanelsWrap = document.getElementById('fs-sum-panels-wrap');
+    if (sumPanelsWrap) {
+      sumPanelsWrap.innerHTML =
+        buildSummaryPanel('sum_p1','rgba(192,57,43,0.15)','#c0392b','#e88') +
+        buildSummaryPanel('sum_p2','rgba(39,174,96,0.12)','#27ae60','#7ec850') +
+        buildSummaryPanel('sum_p3','rgba(142,68,173,0.15)','#8e44ad','#c8a0e0') +
+        buildSummaryPanel('sum_p4','rgba(232,160,32,0.12)','#e8a020','#e8a020') +
+        buildSummaryPanel('sum_p5','rgba(123,0,0,0.25)','#c0392b','#ffaaaa') +
+        buildSummaryPanel('sum_p6','rgba(41,128,185,0.15)','#2980b9','#7ab8e0') +
+        buildSummaryPanel('sum_p7','rgba(15,34,24,0.9)','var(--leaf)','var(--lime)');
+    }
+    // Refresh ordinance view text
+    const ordHdr = document.getElementById('fs-ord-header-display');
+    if (ordHdr) ordHdr.textContent = getCredsVal('ord_header');
+    const ordBdy = document.getElementById('fs-ord-body');
+    if (ordBdy) ordBdy.textContent = getCredsVal('ord_body');
+    // <select> element is untouched — it stays on the new value the user just chose
+  }
+}const CREDS_DEFAULTS = {
   title: 'FIELD INSPECTOR',
   sub: 'Department · Division · Scope',
   roles_whoami_heading: 'WHO I AM',
@@ -4563,7 +4996,7 @@ function handleDocsUpload(event) {
     const reader = new FileReader();
     reader.onload = e => {
       const caption = file.name.replace(/\.[^.]+$/, '');
-      existing.push({ id: Date.now() + Math.random(), data: e.target.result, caption });
+      existing.push({ id: Date.now() * 1000 + Math.floor(Math.random() * 999), data: e.target.result, caption });
       loaded++;
       if (loaded === files.length) {
         localStorage.setItem('creds-ref-docs', JSON.stringify(existing));
@@ -4781,16 +5214,19 @@ const rolesBtn = 'fsSetView(\'auth\')';
             <option value="">— Choose your position to auto-fill —</option>
           </select>
         </div>
+        <div id="fs-roles-panels-wrap">
         ${buildRolesPanel('roles_whoami','rgba(255,255,255,0.07)','white')}
         ${buildRolesPanel('roles_authority','rgba(255,255,255,0.07)','white')}
         ${buildRolesPanel('roles_enforce','rgba(255,255,255,0.07)','white')}
         ${buildRolesPanel('roles_exempt','rgba(255,248,230,0.07)','#ffaa44')}
+        </div>
       </div>
 
       <!-- SUMMARY VIEW -->
       <div id="fs-view-sum" style="display:none">
         <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;color:var(--lime);margin-bottom:2px">ENFORCEMENT REFERENCE</div>
         <div style="font-size:0.52rem;color:rgba(200,230,201,0.45);font-family:'Space Mono',monospace;margin-bottom:14px">Shorthand decision guide</div>
+        <div id="fs-sum-panels-wrap">
         ${buildSummaryPanel('sum_p1','rgba(192,57,43,0.15)','#c0392b','#e88')}
         ${buildSummaryPanel('sum_p2','rgba(39,174,96,0.12)','#27ae60','#7ec850')}
         ${buildSummaryPanel('sum_p3','rgba(142,68,173,0.15)','#8e44ad','#c8a0e0')}
@@ -4798,6 +5234,7 @@ const rolesBtn = 'fsSetView(\'auth\')';
         ${buildSummaryPanel('sum_p5','rgba(123,0,0,0.25)','#c0392b','#ffaaaa')}
         ${buildSummaryPanel('sum_p6','rgba(41,128,185,0.15)','#2980b9','#7ab8e0')}
         ${buildSummaryPanel('sum_p7','rgba(15,34,24,0.9)','var(--leaf)','var(--lime)')}
+        </div>
       </div>
 
       <!-- ORDINANCE VIEW -->
@@ -5065,5 +5502,19 @@ try {
 try { buildSwipeDots(); } catch(e) {}
 
 </script>
+
+<!-- ===== MISC LINKS MODAL ===== -->
+<div id="misc-links-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9300;overflow-y:auto;-webkit-overflow-scrolling:touch">
+  <div style="background:white;border-radius:16px 16px 0 0;padding:0 0 40px;max-width:480px;margin:40px auto 0;min-height:calc(100vh - 40px);box-shadow:0 -4px 40px rgba(0,0,0,0.3)">
+    <div style="position:sticky;top:0;background:white;border-radius:16px 16px 0 0;padding:16px 16px 10px;border-bottom:1px solid #f0f0f0;z-index:2">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:0.95rem;color:var(--forest)">📋 City Contacts &amp; Resources</div>
+        <button onclick="document.getElementById('misc-links-modal').style.display='none'" style="background:none;border:none;font-size:1.4rem;color:#aaa;cursor:pointer;padding:0 4px;line-height:1">✕</button>
+      </div>
+      <div style="font-size:0.54rem;color:#999;font-family:'Space Mono',monospace;margin-top:3px">Tap any link to open · Phone numbers dial directly</div>
+    </div>
+    <div id="misc-links-body" style="padding:12px 14px"></div>
+  </div>
+</div>
 </body>
 </html>
