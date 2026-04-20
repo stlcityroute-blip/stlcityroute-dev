@@ -247,7 +247,7 @@ header{
 .input-row{display:flex;gap:7px;margin-bottom:7px;align-items:stretch}
 .input-field{flex:1;padding:9px 11px;border:1.5px solid #ddd;border-radius:9px;font-family:'Space Mono',monospace;font-size:0.76rem;color:var(--forest);background:#fafafa;outline:none;transition:border-color 0.2s}
 .input-field:focus{border-color:var(--leaf);background:white;box-shadow:0 0 0 3px rgba(37,99,235,0.1)}
-.select-field{padding:9px 10px;border:1.5px solid #ddd;border-radius:9px;font-family:'Syne',sans-serif;font-weight:700;font-size:0.7rem;color:var(--forest);background:#fafafa;cursor:pointer;outline:none}
+.select-field{width:100%;box-sizing:border-box;padding:9px 10px;border:1.5px solid #ddd;border-radius:9px;font-family:'Syne',sans-serif;font-weight:700;font-size:0.7rem;color:var(--forest);background:#fafafa;cursor:pointer;appearance:none;-webkit-appearance:none;outline:none;max-width:100%}
 .btn-add{width:100%;padding:11px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--moss),var(--leaf));color:var(--lime);font-family:'Syne',sans-serif;font-weight:800;font-size:0.8rem;letter-spacing:1px;cursor:pointer;transition:all 0.2s;margin-top:4px}
 .btn-add:active{transform:scale(0.98);opacity:0.9}
 
@@ -888,10 +888,12 @@ header{
     <button onclick="showFullscreen('questions')" style="padding:11px 14px;border:none;border-radius:10px;background:linear-gradient(135deg,#7a5000,#e8a020);color:white;font-family:'Syne',sans-serif;font-weight:800;font-size:0.72rem;cursor:pointer;text-align:left">❓ QUESTIONS &amp; FOLLOW-UP <span style="font-weight:400;opacity:0.7;font-size:0.58rem">— Contacts &amp; QR codes</span></button>
     <button onclick="showFullscreen('authority')" style="padding:11px 14px;border:none;border-radius:10px;background:linear-gradient(135deg,#1a4a8c,#2980b9);color:white;font-family:'Syne',sans-serif;font-weight:800;font-size:0.72rem;cursor:pointer;text-align:left">⚖️ ROLES &amp; AUTHORITY <span style="font-weight:400;opacity:0.7;font-size:0.58rem">— Toggle 3 views</span></button>
     <button onclick="showFullscreen('docs')" style="padding:11px 14px;border:1px solid rgba(126,200,80,0.3);border-radius:10px;background:linear-gradient(135deg,#0f2e1a,#1a3320);color:white;font-family:'Syne',sans-serif;font-weight:800;font-size:0.72rem;cursor:pointer;text-align:left">📄 REFERENCE DOCUMENTS <span style="font-weight:400;opacity:0.7;font-size:0.58rem">— Saved images &amp; docs</span></button>
+    <button onclick="switchTab('data')" style="padding:11px 14px;border:none;border-radius:10px;background:linear-gradient(135deg,#0d2b6b,#2563eb);color:white;font-family:'Syne',sans-serif;font-weight:800;font-size:0.72rem;cursor:pointer;text-align:left">📊 DATA &amp; METRICS <span style="font-weight:400;opacity:0.7;font-size:0.58rem">— Exports, shift log, analytics</span></button>
+    <button onclick="switchTab('help')" style="padding:11px 14px;border:none;border-radius:10px;background:linear-gradient(135deg,#2d1b6b,#7c3aed);color:white;font-family:'Syne',sans-serif;font-weight:800;font-size:0.72rem;cursor:pointer;text-align:left">❓ HELP &amp; GUIDE <span style="font-weight:400;opacity:0.7;font-size:0.58rem">— How-to, setup, contact</span></button>
   </div>
 
   <!-- ── SETTINGS BUTTON ── -->
-    <button onclick="openCredsCustomize()" style="width:100%;padding:11px 14px;border:1.5px solid rgba(126,200,80,0.35);border-radius:10px;background:rgba(126,200,80,0.08);color:var(--lime);font-family:'Syne',sans-serif;font-weight:800;font-size:0.72rem;cursor:pointer;text-align:center;letter-spacing:0.5px">⚙️ SETTINGS</button>
+  <button onclick="openCredsCustomize()" style="width:100%;padding:11px 14px;border:1.5px solid rgba(126,200,80,0.35);border-radius:10px;background:rgba(126,200,80,0.08);color:var(--lime);font-family:'Syne',sans-serif;font-weight:800;font-size:0.72rem;cursor:pointer;text-align:center;letter-spacing:0.5px">⚙️ SETTINGS</button>
 </div>
 
 <!-- ── FULLSCREEN OVERLAY (shared for all views) ── -->
@@ -914,27 +916,31 @@ header{
       <button onclick="document.getElementById('creds-id-input').click()" style="flex:1;min-width:0;padding:7px 8px;border:1.5px solid var(--leaf);border-radius:9px;background:var(--sky);color:var(--moss);font-family:'Syne',sans-serif;font-weight:700;font-size:0.6rem;cursor:pointer;white-space:nowrap">📷 Upload Photo</button>
       <button onclick="rotateCredPhoto(-90)" style="padding:7px 10px;border:1.5px solid #ddd;border-radius:9px;background:#f5f5f5;color:#555;font-family:'Syne',sans-serif;font-weight:700;font-size:0.85rem;cursor:pointer" title="Rotate left">↺</button>
       <button onclick="rotateCredPhoto(90)" style="padding:7px 10px;border:1.5px solid #ddd;border-radius:9px;background:#f5f5f5;color:#555;font-family:'Syne',sans-serif;font-weight:700;font-size:0.85rem;cursor:pointer" title="Rotate right">↻</button>
-      <button onclick="clearCredPhoto()" style="padding:7px 10px;border:1.5px solid #fde8e8;border-radius:9px;background:#fde8e8;color:var(--danger);font-family:'Syne',sans-serif;font-weight:700;font-size:0.58rem;cursor:pointer;white-space:nowrap">🗑 Clear Photo</button>
+      <button onclick="if(confirm('Clear your ID photo? This cannot be undone.')) clearCredPhoto()" style="padding:7px 10px;border:1.5px solid #fde8e8;border-radius:9px;background:#fde8e8;color:var(--danger);font-family:'Syne',sans-serif;font-weight:700;font-size:0.58rem;cursor:pointer;white-space:nowrap">🗑 Clear Photo</button>
     </div>
     <div style="font-size:0.56rem;color:#999;font-family:'Space Mono',monospace;margin-bottom:14px">Upload your city ID card. Use rotation buttons to orient correctly.</div>
 
     <div style="height:1px;background:#eee;margin-bottom:14px"></div>
 
-    <!-- POSITION PRE-FILL SELECTOR -->
-    <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.68rem;color:var(--forest);letter-spacing:1px;margin-bottom:4px">QUICK FILL FROM POSITION</div>
-    <div style="font-size:0.54rem;color:#888;font-family:'Space Mono',monospace;margin-bottom:6px">Selecting a position pre-fills the fields below for editing. To permanently set your profile position, use the Role &amp; Authority page.</div>
-    <select id="customize-position-select" class="select-field" onchange="prefillFromPosition(this.value)" style="margin-bottom:12px;font-size:0.68rem">
-      <option value="">— Select a position to pre-fill —</option>
+    <!-- NAME / BADGE — always first -->
+    <div style="margin-bottom:10px">
+      <div style="font-size:0.6rem;font-family:'Syne',sans-serif;font-weight:700;color:#555;margin-bottom:3px">YOUR NAME / BADGE ID</div>
+      <input type="text" id="creds-name-input" class="input-field" placeholder="e.g. Gilbert, B. · Badge 42" style="font-size:0.72rem;width:100%;box-sizing:border-box">
+      <div style="font-size:0.52rem;color:#aaa;font-family:'Space Mono',monospace;margin-top:2px">Used in CSB clipboard and completion logs.</div>
+    </div>
+
+    <div style="height:1px;background:#eee;margin-bottom:14px"></div>
+
+    <!-- SELECT YOUR POSITION -->
+    <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.72rem;color:var(--forest);letter-spacing:1px;margin-bottom:4px">SELECT YOUR POSITION</div>
+    <div style="font-size:0.54rem;color:#888;font-family:'Space Mono',monospace;margin-bottom:8px">Choosing a position pre-fills your title, division, department, scope, and selects the matching contacts — and sets default content for your Roles, Summary &amp; Ordinance pages. All changes lock in when you tap Save.</div>
+    <select id="customize-position-select" class="select-field" onchange="prefillFromPosition(this.value)" style="margin-bottom:12px;font-size:0.68rem;width:100%;box-sizing:border-box">
+      <option value="">— Select your position —</option>
     </select>
     <div style="height:1px;background:#eee;margin-bottom:14px"></div>
 
-    <!-- ID CARD TEXT FIELDS -->
+    <!-- ID CARD TEXT FIELDS (populated by position selector or manual entry) -->
     <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.68rem;color:var(--forest);letter-spacing:1px;margin-bottom:8px">ID CARD TEXT</div>
-    <div style="margin-bottom:7px">
-      <div style="font-size:0.6rem;font-family:'Syne',sans-serif;font-weight:700;color:#555;margin-bottom:3px">YOUR NAME / BADGE ID</div>
-      <input type="text" id="creds-name-input" class="input-field" placeholder="e.g. Gilbert, B. · Badge 42" style="font-size:0.72rem;width:100%;box-sizing:border-box">
-      <div style="font-size:0.52rem;color:#aaa;font-family:'Space Mono',monospace;margin-top:2px">Used in CSB clipboard and completion logs. Same as Settings → Inspector ID.</div>
-    </div>
     <div style="margin-bottom:7px">
       <div style="font-size:0.6rem;font-family:'Syne',sans-serif;font-weight:700;color:#555;margin-bottom:3px">TITLE / ROLE</div>
       <input type="text" id="creds-title-input" class="input-field" placeholder="e.g. NUISANCE INSPECTOR" style="font-size:0.72rem;width:100%;box-sizing:border-box">
@@ -1235,8 +1241,6 @@ header{
       <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:0.78rem;color:#0d2b6b;margin-bottom:8px">⚙️ SETTINGS</div>
       <div style="font-size:0.63rem;color:#333333;font-family:'Space Mono',monospace;line-height:1.9">
         <b>Anthropic API Key</b> — Required for 📷 photo scan. Get a free key at console.anthropic.com. Stored only on your device.<br><br>
-        <b>End of Day Location</b> — Set a return address for route optimization. The algorithm nudges the final stops toward this location.<br><br>
-        <b>Manual Start Location</b> — Override GPS with a typed starting address.<br><br>
         <b>Inspector Name &amp; Title</b> — Appears in end-of-day summaries and exports.
       </div>
     </div>
@@ -1461,6 +1465,28 @@ function stagePill(stage) {
 
 // Tab switching
 function switchTab(name) {
+  // When leaving the creds/info tab, revert roles to saved default
+  const _curActive = document.querySelector('.tab-btn.active');
+  if (_curActive && _curActive.id === 'tab-creds' && name !== 'creds') {
+    const _savedJob = getCredsVal('saved_job_id') || localStorage.getItem('selected-job-role') || '';
+    if (_savedJob) {
+      // Quietly reload saved job content without toasts
+      const _job = getCityJobs().find(j => j.id === _savedJob);
+      if (_job) {
+        setCredsVal('roles_whoami_body',    _job.whoami    || '');
+        setCredsVal('roles_authority_body', _job.authority || '');
+        setCredsVal('roles_enforce_body',   _job.enforce   || '');
+        setCredsVal('roles_exempt_body',    _job.exempt    || '');
+        setCredsVal('ord_header',           _job.ord_header || '');
+        setCredsVal('ord_body',             _job.ord_body   || '');
+        for (var _ri=0; _ri<7; _ri++) {
+          var _rp = _job.summary && _job.summary[_ri];
+          setCredsVal('sum_p'+(_ri+1)+'_heading', _rp?(_rp.heading||''):'');
+          setCredsVal('sum_p'+(_ri+1)+'_body',    _rp?(_rp.body||''):'');
+        }
+      }
+    }
+  }
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('screen-' + name).classList.add('active');
@@ -4035,7 +4061,7 @@ function openMiscLinks() {
     {
       heading: '📣 LOCAL BUSINESS LISTINGS',
       items: [
-        { label: 'STL Pest Control', sub: 'Licensed & insured · Residential & commercial · Bed bugs · termites · rodents · ants · wasps · wildlife removal · St. Louis City & County', url: 'tel:+13146560306', phone: '3146560306', premiere: true },
+        { label: 'STL Pest Control', sub: 'Licensed & insured · Residential & commercial · Bed bugs · termites · rodents · ants · wasps · wildlife removal · St. Louis City & County', url: 'https://stlpestcontrol.com/', phone: '3148336222', premiere: true },
         { label: '🌱 Nonprofits list free — all others: tap to learn about listing rates', sub: 'Pest control · wildlife removal · towing · law · demolition · environmental cleanup and more. Standard $25/yr · Featured $75/yr · Premiere $150/yr', url: '__ADVERTISE__' },
       ]
     },
@@ -4110,6 +4136,7 @@ function openMiscLinks() {
     {
       heading: '🐾 ANIMALS & WILDLIFE',
       items: [
+        { label: 'STL Pest Control — Wildlife Removal', sub: 'Rats · mice · squirrels · raccoons · bats · birds · bed bugs · wasps · ants · termites. Licensed & insured. City & County. 24-hr emergency line.', url: 'https://stlpestcontrol.com/', phone: '3148336222' },
         { label: 'City Animal Care & Control — Report a Problem', sub: 'Stray · cruelty · bite/attack · injured animal · deceased animal. M–F 8a–5p call ACC directly. After hours/weekends call (314) 231-1212', url: 'https://www.stlouis-mo.gov/government/departments/health/animal-care-control/report-animal-problem.cfm', phone: '3146571500' },
         { label: 'City Animal Care & Control — After Hours', sub: 'Animal in distress after hours, weekends, and holidays', url: 'tel:+13142311212', phone: '3142311212', display: '(314) 231-1212' },
         { label: 'CARE STL — City Shelter (2801 Clark Ave)', sub: 'Adoptions · lost pet search · foster. Managed nonprofit partner of City shelter. 7 days/week 10a–5p', url: 'https://www.icarestl.org/', phone: '3146571500' },
@@ -5741,28 +5768,45 @@ function getCityJobs() {
 // ── Sector toggle ─────────────────────────────────────────────────────────────
 function setSector(sector) {
   localStorage.setItem('selected-sector', sector);
+  // Update sector button styles
+  const pubBtn = document.getElementById('sector-btn-public');
+  const privBtn = document.getElementById('sector-btn-private');
+  if (pubBtn) {
+    pubBtn.style.background  = sector==='public'  ? 'var(--lime)' : 'transparent';
+    pubBtn.style.color       = sector==='public'  ? 'var(--forest)' : 'var(--lime)';
+  }
+  if (privBtn) {
+    privBtn.style.background = sector==='private' ? 'var(--lime)' : 'transparent';
+    privBtn.style.color      = sector==='private' ? 'var(--forest)' : 'var(--lime)';
+  }
+  _populateRolesSelect(sector);
+}
+
+function _populateRolesSelect(sector) {
   const sel = document.getElementById('job-role-select');
   if (!sel) return;
-  const savedJob = localStorage.getItem('selected-job-role') || '';
+  const savedJob = getCredsVal('saved_job_id') || localStorage.getItem('selected-job-role') || '';
   sel.innerHTML = '';
   const blank = document.createElement('option');
   blank.value = '';
-  blank.textContent = '— Preview role (view only — set in ⚙️ Settings to save) —';
+  blank.textContent = '— Select a position —';
   sel.appendChild(blank);
-  getCityJobs().filter(j => (j.sector||'public') === sector).sort((a,b)=>a.label.localeCompare(b.label)).forEach(j => {
-    const opt = document.createElement('option');
-    opt.value = j.id;
-    opt.textContent = j.label;
-    if (j.id === savedJob && (getCityJobs().find(x=>x.id===savedJob)?.sector||'public') === sector) opt.selected = true;
-    sel.appendChild(opt);
-  });
-  // Update button styles
-  var pub = document.getElementById('sector-btn-public');
-  var prv = document.getElementById('sector-btn-private');
-  if (pub) { pub.style.background = sector==='public'?'var(--lime)':'transparent'; pub.style.color = sector==='public'?'var(--forest)':'var(--lime)'; }
-  if (prv) { prv.style.background = sector==='private'?'var(--lime)':'transparent'; prv.style.color = sector==='private'?'var(--forest)':'var(--lime)'; }
-  var lbl = document.getElementById('sector-position-label');
-  if (lbl) lbl.textContent = sector==='public' ? 'SELECT YOUR POSITION' : 'SELECT YOUR ROLE';
+  // All jobs of this sector, alphabetically
+  getCityJobs()
+    .filter(j => (j.sector || 'public') === sector)
+    .sort((a,b) => a.label.localeCompare(b.label))
+    .forEach(j => {
+      const opt = document.createElement('option');
+      opt.value = j.id;
+      opt.textContent = j.label;
+      if (j.id === savedJob) opt.selected = true;
+      sel.appendChild(opt);
+    });
+  // If saved job matches this sector, auto-load it
+  if (savedJob) {
+    const savedJobObj = getCityJobs().find(j => j.id === savedJob && (j.sector||'public') === sector);
+    if (savedJobObj) applyJobRole(savedJob);
+  }
 }
 function applyJobRole(jobId) {
   const job = getCityJobs().find(j => j.id === jobId);
@@ -5905,21 +5949,36 @@ function prefillFromPosition(jobId) {
   const jobs = getCityJobs();
   const job  = jobs.find(j => j.id === jobId);
   if (!job) return;
-  // Pre-fill title
+
+  // ── Title (short form before the dash)
   const titleEl = document.getElementById('creds-title-input');
-  if (titleEl) titleEl.value = job.label || '';
-  // Parse division / department / scope from whoami or label
-  // Try to extract from the job's whoami description
+  if (titleEl) titleEl.value = (job.label || '').split(' — ')[0].trim();
+
+  // ── Division / Dept / Scope
   const whoami = job.whoami || '';
-  const divMatch  = whoami.match(/Division[^,;.]*/i);
-  const deptMatch = whoami.match(/Department of ([^,;.]+)/i) || whoami.match(/Dept\.? of ([^,;.]+)/i);
   const divEl   = document.getElementById('creds-division-input');
   const deptEl  = document.getElementById('creds-dept-input');
   const scopeEl = document.getElementById('creds-scope-input');
-  if (divEl)  divEl.value  = divMatch  ? divMatch[0].trim()  : '';
-  if (deptEl) deptEl.value = deptMatch ? deptMatch[1].trim() : '';
+  const divM  = whoami.match(/City of St\. Louis\s+([A-Za-z ,&\/]+?(?:Division|Bureau|Section|Unit)[A-Za-z ,&\/]*?)(?:,|\.|\bDepartment\b|$)/i);
+  const deptM = whoami.match(/Department of ([A-Za-z ,&]+?)(?:\.|,|\bI am\b|$)/i);
+  if (divEl)   divEl.value   = divM  ? divM[1].trim()  : '';
+  if (deptEl)  deptEl.value  = deptM ? ('Dept. of ' + deptM[1].trim()) : '';
   if (scopeEl) scopeEl.value = job.ord_header || '';
-  showToast('Fields pre-filled — review and edit before saving ✓');
+
+  // ── Load role/authority/ordinance/summary content
+  setCredsVal('roles_whoami_body',    job.whoami    || '');
+  setCredsVal('roles_authority_body', job.authority || '');
+  setCredsVal('roles_enforce_body',   job.enforce   || '');
+  setCredsVal('roles_exempt_body',    job.exempt    || '');
+  setCredsVal('ord_header',           job.ord_header || '');
+  setCredsVal('ord_body',             job.ord_body   || '');
+  for (var _i = 0; _i < 7; _i++) {
+    var _p = job.summary && job.summary[_i];
+    setCredsVal('sum_p' + (_i+1) + '_heading', _p ? (_p.heading || '') : '');
+    setCredsVal('sum_p' + (_i+1) + '_body',    _p ? (_p.body    || '') : '');
+  }
+
+  showToast('Position loaded — review fields then tap Save \u2713');
 }
 
 function saveSettingsKeyFromCustomize() {
@@ -5951,17 +6010,29 @@ function refreshApiKeyDisplay() {
 
 function _populateCustomizePositionSelect() {
   const sel = document.getElementById('customize-position-select');
-  if (!sel || sel.options.length > 1) return;
-  const jobs = getCityJobs();
-  jobs.forEach(function(j) {
+  if (!sel) return;
+  // Always repopulate (reset first)
+  while (sel.options.length > 1) sel.remove(sel.options.length - 1);
+  // All jobs, sorted alphabetically by label, with sector prefix
+  const jobs = getCityJobs().slice().sort((a, b) => a.label.localeCompare(b.label));
+  const savedId = getCredsVal('saved_job_id') || localStorage.getItem('selected-job-role') || '';
+  jobs.forEach(j => {
     const o = document.createElement('option');
     o.value = j.id;
-    o.textContent = j.label;
+    const sector = (j.sector || 'public') === 'private' ? '🏢 ' : '🏛️ ';
+    o.textContent = sector + j.label;
+    if (j.id === savedId) o.selected = true;
     sel.appendChild(o);
   });
 }
 
 function saveCredsCustomize() {
+  // Save selected position ID so it can be restored on next open
+  const posSel = document.getElementById('customize-position-select');
+  if (posSel && posSel.value) {
+    setCredsVal('saved_job_id', posSel.value);
+    localStorage.setItem('selected-job-role', posSel.value);
+  }
   // Name → same inspector-id key used by Settings and CSB clipboard
   setInspectorId(document.getElementById('creds-name-input').value.trim());
 
@@ -6229,7 +6300,14 @@ function showFullscreen(type) {
   document.body.style.overflow = 'hidden';
 
   if (type === 'questions') { _fsShowQuestions(content); return; }
-  if (type === 'authority') { _fsShowAuthority(content); return; }
+  if (type === 'authority') {
+    _fsShowAuthority(content);
+    // After DOM is built, initialize with saved sector + auto-load saved position
+    const _savedSec = localStorage.getItem('selected-sector') || 'public';
+    setSector(_savedSec);
+    fsSetView('auth');
+    return;
+  }
   if (type === 'docs')      { _fsShowDocs(content); }
 }
 
@@ -6313,9 +6391,9 @@ const rolesBtn = 'fsSetView(\'auth\')';
           </div>
           <div style="font-size:0.55rem;color:rgba(200,230,201,0.6);font-family:Syne,sans-serif;font-weight:700;margin-bottom:5px;letter-spacing:0.5px" id="sector-position-label">SELECT YOUR POSITION</div>
           <select id="job-role-select" onchange="applyJobRole(this.value)" style="width:100%;padding:9px 10px;border-radius:8px;border:1.5px solid rgba(126,200,80,0.4);background:#1a3320;color:var(--lime);font-family:Syne,sans-serif;font-weight:700;font-size:0.62rem;cursor:pointer;appearance:none;-webkit-appearance:none">
-            <option value="">— Choose your position to auto-fill —</option>
-          </sele
-            <div style="font-size:0.46rem;color:rgba(180,205,255,0.45);font-family:Space Mono,monospace;margin-top:3px;text-align:center">👁 View only — to save your position use ⚙️ Settings</div>ct>
+            <option value="">— Choose your position —</option>
+          </select>
+          <div style="font-size:0.46rem;color:rgba(180,205,255,0.45);font-family:Space Mono,monospace;margin-top:3px;text-align:center">👁 Previewing only — save your position in ⚙️ Settings</div>
         </div>
         <div id="fs-roles-panels-wrap">
         ${buildRolesPanel('roles_whoami','#ffffff','#0d2b6b')}
